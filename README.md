@@ -76,8 +76,12 @@ server actions отказывают без записи. Ни один id из U
    Neon отдаёт обе строки на вкладке Connect; при подключении через Vercel Marketplace
    они добавляются автоматически.
 
-4. Deploy. Скрипт сборки сам определяет провайдера Prisma и делает `prisma db push` — миграции не нужны.
-5. Открыть домен, `/setup` предложит создать первого администратора.
+4. Root Directory проекта — `arveland` (приложение лежит в подпапке репозитория).
+   Framework Preset должен быть **Next.js**; на всякий случай это же зафиксировано
+   в `vercel.json` — при пресете «Other» Vercel ищет статическую папку `public`
+   и падает с `No Output Directory named "public" found`.
+5. Deploy. Скрипт сборки сам определяет провайдера Prisma и делает `prisma db push` — миграции не нужны.
+6. Открыть домен, `/setup` предложит создать первого администратора.
 
 Схема Prisma одна на оба окружения: `scripts/db-provider.mjs` определяет провайдера по схеме `DATABASE_URL`
 (`postgresql://` → postgresql, `file:` → sqlite). Переопределить можно переменной `DATABASE_PROVIDER`, но обычно
