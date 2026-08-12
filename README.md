@@ -62,18 +62,22 @@ server actions отказывают без записи. Ни один id из U
 
 1. Завести бесплатную PostgreSQL-базу — проще всего Neon (см. таблицу выше).
 2. Импортировать репозиторий в Vercel.
-3. Задать переменные окружения проекта:
+3. Задать в Project → Settings → Environment Variables **две** переменные:
 
-   | Переменная          | Значение                                                |
-   | ------------------- | ------------------------------------------------------- |
-   | `DATABASE_PROVIDER` | `postgresql`                                            |
-   | `DATABASE_URL`      | строка подключения (pooled, `?sslmode=require`)          |
-   | `AUTH_SECRET`       | `openssl rand -base64 32`                               |
+   | Переменная     | Значение                                        |
+   | -------------- | ----------------------------------------------- |
+   | `DATABASE_URL` | строка подключения (pooled, `?sslmode=require`) |
+   | `AUTH_SECRET`  | вывод `openssl rand -base64 32`                 |
 
-4. Deploy. Скрипт сборки сам переключает провайдера Prisma и делает `prisma db push` — миграции не нужны.
+   Выставить их для Production, Preview и Development — сборка падает без `DATABASE_URL`.
+
+4. Deploy. Скрипт сборки сам определяет провайдера Prisma и делает `prisma db push` — миграции не нужны.
 5. Открыть домен, `/setup` предложит создать первого администратора.
 
-Схема Prisma одна на оба окружения: `scripts/db-provider.mjs` подставляет провайдер из `DATABASE_PROVIDER` (по умолчанию `sqlite`).
+Схема Prisma одна на оба окружения: `scripts/db-provider.mjs` определяет провайдера по схеме `DATABASE_URL`
+(`postgresql://` → postgresql, `file:` → sqlite). Переопределить можно переменной `DATABASE_PROVIDER`, но обычно
+это не нужно. Если на хостинге `DATABASE_URL` не задан, сборка падает сразу с понятным сообщением, а не с
+ошибкой валидации схемы Prisma.
 
 ## Структура
 
