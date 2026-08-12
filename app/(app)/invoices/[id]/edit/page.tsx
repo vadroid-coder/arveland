@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { ownedInvoiceOrNotFound } from "@/lib/guard";
 import InvoiceEditor from "@/components/InvoiceEditor";
 import { addDays, startOfDayUTC, toDateInput } from "@/lib/invoice";
 
@@ -12,14 +12,7 @@ export default async function EditInvoicePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const invoice = await prisma.invoice.findUnique({
-    where: { id },
-    include: {
-      items: { orderBy: { sortNo: "asc" } },
-      business: true,
-    },
-  });
-  if (!invoice) notFound();
+  const invoice = await ownedInvoiceOrNotFound(id);
 
   const [clients, taxRates] = await Promise.all([
     prisma.client.findMany({

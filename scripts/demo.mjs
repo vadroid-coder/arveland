@@ -6,8 +6,26 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const PREFIX = "ARV";
+
+// Sample data belongs to a specific account — pass DEMO_OWNER_EMAIL to pick one,
+// otherwise it lands on the first admin.
+const owner = process.env.DEMO_OWNER_EMAIL
+  ? await prisma.user.findUnique({
+      where: { email: process.env.DEMO_OWNER_EMAIL.trim().toLowerCase() },
+    })
+  : await prisma.user.findFirst({
+      where: { role: "ADMIN" },
+      orderBy: { createdAt: "asc" },
+    });
+
+if (!owner) {
+  console.error("[demo] no user to own the sample data — run `npm run seed` first");
+  await prisma.$disconnect();
+  process.exit(1);
+}
+
 const existing = await prisma.business.findFirst({
-  where: { invoicePrefix: PREFIX },
+  where: { invoicePrefix: PREFIX, ownerId: owner.id },
 });
 
 if (existing) {
@@ -18,6 +36,7 @@ if (existing) {
 
 const business = await prisma.business.create({
   data: {
+    ownerId: owner.id,
     name: "ArveMaa OÜ",
     regNumber: "16123456",
     vatNumber: "EE102345678",

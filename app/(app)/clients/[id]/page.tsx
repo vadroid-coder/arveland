@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { ownedClientOrNotFound } from "@/lib/guard";
 import ClientFields from "@/components/ClientFields";
 import SubmitButton from "@/components/SubmitButton";
 import { formatMoney } from "@/lib/money";
@@ -19,13 +18,7 @@ export default async function EditClientPage({
   const { id } = await params;
   const { error } = await searchParams;
 
-  const client = await prisma.client.findUnique({
-    where: { id },
-    include: {
-      invoices: { orderBy: { issueDate: "desc" }, take: 10 },
-    },
-  });
-  if (!client) notFound();
+  const client = await ownedClientOrNotFound(id);
 
   const update = updateClient.bind(null, id);
   const remove = deleteClient.bind(null, id);

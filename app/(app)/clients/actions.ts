@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth";
+import { ownedBusiness, ownedClient } from "@/lib/guard";
 
 function str(fd: FormData, key: string) {
   const v = String(fd.get(key) ?? "").trim();
@@ -22,7 +22,8 @@ function read(fd: FormData) {
 }
 
 export async function createClient(businessId: string, fd: FormData) {
-  await requireUser();
+  if (!(await ownedBusiness(businessId))) redirect("/clients");
+
   const data = read(fd);
   if (!data.name || !data.regNumber) redirect("/clients?error=required");
 
@@ -37,7 +38,8 @@ export async function createClient(businessId: string, fd: FormData) {
 }
 
 export async function updateClient(id: string, fd: FormData) {
-  await requireUser();
+  if (!(await ownedClient(id))) redirect("/clients");
+
   const data = read(fd);
   if (!data.name || !data.regNumber) redirect(`/clients/${id}?error=required`);
 
@@ -47,7 +49,8 @@ export async function updateClient(id: string, fd: FormData) {
 }
 
 export async function deleteClient(id: string) {
-  await requireUser();
+  if (!(await ownedClient(id))) redirect("/clients");
+
   await prisma.client.delete({ where: { id } });
   revalidatePath("/clients");
   redirect("/clients");

@@ -28,7 +28,10 @@ export default async function AdminPage({
   const admin = await requireAdmin();
   const { error, created, saved } = await searchParams;
 
-  const users = await prisma.user.findMany({ orderBy: { createdAt: "asc" } });
+  const users = await prisma.user.findMany({
+    orderBy: { createdAt: "asc" },
+    include: { _count: { select: { businesses: true } } },
+  });
   const notice = error ? NOTICES[error] : null;
 
   return (
@@ -38,7 +41,9 @@ export default async function AdminPage({
           Kasutajad
         </h1>
         <p className="text-sm text-ink-500">
-          Halda ligipääsu ArveMaa administreerimispaneelile.
+          Iga konto on täiesti eraldi: oma ettevõtted, kliendid ja arved. Ka
+          administraator näeb ainult enda andmeid — administraatori õigus
+          puudutab üksnes kasutajate haldust.
         </p>
       </div>
 
@@ -64,7 +69,8 @@ export default async function AdminPage({
                   <div>
                     <p className="font-medium text-ink-900">{u.email}</p>
                     <p className="text-xs text-ink-400">
-                      Loodud {u.createdAt.toLocaleDateString("et-EE")}
+                      Loodud {u.createdAt.toLocaleDateString("et-EE")} ·{" "}
+                      {u._count.businesses} ettevõtet
                       {u.id === admin.uid ? " · see oled sina" : ""}
                     </p>
                   </div>
@@ -120,7 +126,7 @@ export default async function AdminPage({
                     <SubmitButton
                       className="btn btn-danger"
                       formAction={remove}
-                      confirm={`Kustutada kasutaja ${u.email}?`}
+                      confirm={`Kustutada kasutaja ${u.email}? Koos temaga kustuvad tema ${u._count.businesses} ettevõtet, kliendid ja arved. Seda ei saa tagasi võtta.`}
                     >
                       Kustuta
                     </SubmitButton>

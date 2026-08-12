@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { ownedBusinessOrNotFound } from "@/lib/guard";
 import BusinessForm from "@/components/BusinessForm";
 import SubmitButton from "@/components/SubmitButton";
 import { formatRate } from "@/lib/money";
@@ -19,11 +19,11 @@ export default async function EditBusinessPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const business = await prisma.business.findUnique({
+  await ownedBusinessOrNotFound(id);
+  const business = await prisma.business.findUniqueOrThrow({
     where: { id },
     include: { taxRates: { orderBy: { rate: "asc" } } },
   });
-  if (!business) notFound();
 
   const update = updateBusiness.bind(null, id);
   const archive = archiveBusiness.bind(null, id);

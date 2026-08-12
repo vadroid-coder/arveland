@@ -5,9 +5,10 @@ import { getActiveBusiness } from "@/lib/business";
 export const dynamic = "force-dynamic";
 
 export default async function BusinessesPage() {
-  const { businesses, active } = await getActiveBusiness();
+  const { businesses, active, user } = await getActiveBusiness();
   const counts = await prisma.invoice.groupBy({
     by: ["businessId"],
+    where: { business: { ownerId: user.uid } },
     _count: { _all: true },
   });
   const countFor = (id: string) =>

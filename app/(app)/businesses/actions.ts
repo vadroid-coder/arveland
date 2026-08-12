@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 import { BUSINESS_COOKIE } from "@/lib/business";
+import { ownedBusiness, ownedTaxRate } from "@/lib/guard";
 
 function str(fd: FormData, key: string) {
   const v = String(fd.get(key) ?? "").trim();
@@ -34,11 +35,13 @@ function readBusiness(fd: FormData) {
 }
 
 export async function createBusiness(fd: FormData) {
-  await requireUser();
+  const user = await requireUser();
   const data = readBusiness(fd);
   if (!data.name) redirect("/businesses/new?error=name");
 
-  const business = await prisma.business.create({ data });
+  const business = await prisma.business.create({
+    data: { ...data, ownerId: user.uid },
+  });
 
   // Make the freshly created business the active one.
   const jar = await cookies();
@@ -53,7 +56,8 @@ export async function createBusiness(fd: FormData) {
 }
 
 export async function updateBusiness(id: string, fd: FormData) {
-  await requireUser();
+  if (!(await ownedBusiness(id))) redirect("/businesses");
+
   const data = readBusiness(fd);
   if (!data.name) redirect(`/businesses/${id}?error=name`);
 
@@ -63,7 +67,8 @@ export async function updateBusiness(id: string, fd: FormData) {
 }
 
 export async function archiveBusiness(id: string) {
-  await requireUser();
+  if (!(await ownedBusiness(id))) redirect("/businesses");
+
   await prisma.business.update({ where: { id }, data: { archived: true } });
 
   const jar = await cookies();
@@ -74,7 +79,8 @@ export async function archiveBusiness(id: string) {
 }
 
 export async function addTaxRate(businessId: string, fd: FormData) {
-  await requireUser();
+  if (!(await ownedBusiness(businessId))) redirect("/businesses");
+
   const rate = Number(String(fd.get("rate") ?? "").replace(",", "."));
   if (!Number.isFinite(rate) || rate < 0) return;
 
@@ -87,7 +93,8 @@ export async function addTaxRate(businessId: string, fd: FormData) {
 }
 
 export async function deleteTaxRate(id: string, businessId: string) {
-  await requireUser();
+  if (!(await ownedTaxRate(id))) redirect("/businesses");
+
   await prisma.taxRate.delete({ where: { id } });
   revalidatePath(`/businesses/${businessId}`);
 }

@@ -19,10 +19,18 @@ model User {
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  businesses Business[]
 }
 
 model Business {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
+
+  // Every business belongs to exactly one account. All clients, tax rates and
+  // invoices hang off a business, so this is the only tenancy boundary.
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
   name            String
   regNumber       String?
   vatNumber       String?
@@ -45,6 +53,8 @@ model Business {
   clients  Client[]
   taxRates TaxRate[]
   invoices Invoice[]
+
+  @@index([ownerId])
 }
 
 model Client {

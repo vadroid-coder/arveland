@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth";
+import { ownedBusiness, ownedInvoice } from "@/lib/guard";
 import { computeLine, sumLines, toCents } from "@/lib/money";
 import { buildInvoiceNumber, nextSequence, parseDateInput } from "@/lib/invoice";
 
@@ -42,12 +42,11 @@ function num(value: string, fallback = 0) {
 }
 
 export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> {
-  await requireUser();
-
-  const business = await prisma.business.findUnique({
-    where: { id: payload.businessId },
-  });
+  const business = await ownedBusiness(payload.businessId);
   if (!business) return { ok: false, error: "Ettevõtet ei leitud" };
+
+  if (payload.id && !(await ownedInvoice(payload.id)))
+    return { ok: false, error: "Arvet ei leitud" };
 
   const rawItems = payload.items.filter(
     (i) => i.description.trim() !== "" || toCents(i.amount) !== 0,
@@ -226,7 +225,8 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
 }
 
 export async function setInvoiceStatus(id: string, status: string) {
-  await requireUser();
+  if (!(await ownedInvoice(id))) redirect("/");
+
   await prisma.invoice.update({
     where: { id },
     data: {
@@ -239,19 +239,20 @@ export async function setInvoiceStatus(id: string, status: string) {
 }
 
 export async function deleteInvoice(id: string) {
-  await requireUser();
+  if (!(await ownedInvoice(id))) redirect("/");
+
   await prisma.invoice.delete({ where: { id } });
   revalidatePath("/");
   redirect("/");
 }
 
 export async function duplicateInvoice(id: string) {
-  await requireUser();
-  const src = await prisma.invoice.findUnique({
+  if (!(await ownedInvoice(id))) redirect("/");
+
+  const src = await prisma.invoice.findUniqueOrThrow({
     where: { id },
     include: { items: { orderBy: { sortNo: "asc" } }, business: true },
   });
-  if (!src) redirect("/");
 
   const issueDate = new Date();
   const year = issueDate.getFullYear();
