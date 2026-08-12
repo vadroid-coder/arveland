@@ -176,6 +176,7 @@ export default async function DashboardPage({
                       month={month}
                       period={period}
                       zipName={zipFileName(active.invoicePrefix, year, month)}
+                      companyEmail={active.email}
                       invoices={list.map((i) => ({
                         id: i.id,
                         number: i.number,
@@ -249,7 +250,7 @@ export default async function DashboardPage({
                           <InvoiceRowMenu
                             id={inv.id}
                             number={inv.number}
-                            clientEmail={inv.clientEmail}
+                            companyEmail={active.email}
                           />
                         </td>
                       </tr>
@@ -300,7 +301,7 @@ export default async function DashboardPage({
                         <InvoiceRowMenu
                           id={inv.id}
                           number={inv.number}
-                          clientEmail={inv.clientEmail}
+                          companyEmail={active.email}
                           quick
                         />
                       </div>

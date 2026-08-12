@@ -19,6 +19,7 @@ export default function MonthDownload({
   period,
   invoices,
   zipName,
+  companyEmail,
 }: {
   businessId: string;
   year: number;
@@ -26,6 +27,7 @@ export default function MonthDownload({
   period: string;
   invoices: MonthInvoice[];
   zipName: string;
+  companyEmail: string | null;
 }) {
   const t = useT();
   const [open, setOpen] = useState(false);
@@ -98,6 +100,7 @@ export default function MonthDownload({
       {mailing && (
         <EmailDialog
           target={{ kind: "month", businessId, year, month }}
+          companyEmail={companyEmail}
           attachmentName={zipName}
           onClose={() => setMailing(false)}
         />

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import Modal from "./Modal";
 import { useT } from "./I18nProvider";
 import {
@@ -13,50 +14,62 @@ export type MailTarget =
   | { kind: "invoice"; id: string }
   | { kind: "month"; businessId: string; year: number; month: number };
 
+/**
+ * Confirmation only — there is no recipient field. The server sends to the
+ * company's own address, so an invoice can never be mailed to a third party
+ * from here.
+ */
 export default function EmailDialog({
   target,
-  defaultTo = "",
+  companyEmail,
   attachmentName,
   onClose,
 }: {
   target: MailTarget;
-  defaultTo?: string;
+  companyEmail: string | null;
   attachmentName: string;
   onClose: () => void;
 }) {
   const t = useT();
-  const [to, setTo] = useState(defaultTo);
   const [result, setResult] = useState<MailResult | null>(null);
   const [pending, startTransition] = useTransition();
 
   function send() {
     setResult(null);
     startTransition(async () => {
-      const r =
+      setResult(
         target.kind === "invoice"
-          ? await emailInvoice(target.id, to)
-          : await emailMonth(target.businessId, target.year, target.month, to);
-      setResult(r);
+          ? await emailInvoice(target.id)
+          : await emailMonth(target.businessId, target.year, target.month),
+      );
     });
   }
 
   return (
     <Modal title={t.mail.title} onClose={onClose}>
       <div className="space-y-4">
-        <p className="text-xs text-ink-500">{t.mail.attachment(attachmentName)}</p>
+        {companyEmail ? (
+          <div className="rounded-lg bg-ink-50 px-3 py-2.5 text-sm">
+            <p className="text-xs text-ink-500">{t.mail.toCompany}</p>
+            <p className="mt-0.5 font-medium break-all text-ink-900">
+              {companyEmail}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2 rounded-lg bg-amber-50 px-3 py-2.5">
+            <p className="text-sm text-amber-800">{t.mail.errNoCompanyEmail}</p>
+            <Link
+              href="/businesses"
+              className="inline-block text-sm font-medium text-brand-700 underline"
+            >
+              {t.mail.openBusiness}
+            </Link>
+          </div>
+        )}
 
-        <div>
-          <label className="label">{t.mail.recipient}</label>
-          <input
-            type="email"
-            className="field"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            placeholder="klient@example.com"
-            autoFocus
-            onKeyDown={(e) => e.key === "Enter" && !pending && send()}
-          />
-        </div>
+        <p className="text-xs break-all text-ink-500">
+          {t.mail.attachment(attachmentName)}
+        </p>
 
         {result && (
           <p
@@ -75,7 +88,7 @@ export default function EmailDialog({
             type="button"
             className="btn btn-primary flex-1"
             onClick={send}
-            disabled={pending || to.trim() === ""}
+            disabled={pending || !companyEmail}
           >
             {pending ? t.mail.sending : t.mail.send}
           </button>

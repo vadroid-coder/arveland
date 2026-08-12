@@ -6,12 +6,12 @@ import { useT } from "./I18nProvider";
 
 export default function EmailButton({
   target,
-  defaultTo,
+  companyEmail,
   attachmentName,
   className = "btn btn-ghost",
 }: {
   target: MailTarget;
-  defaultTo?: string;
+  companyEmail: string | null;
   attachmentName: string;
   className?: string;
 }) {
@@ -26,7 +26,7 @@ export default function EmailButton({
       {open && (
         <EmailDialog
           target={target}
-          defaultTo={defaultTo}
+          companyEmail={companyEmail}
           attachmentName={attachmentName}
           onClose={() => setOpen(false)}
         />

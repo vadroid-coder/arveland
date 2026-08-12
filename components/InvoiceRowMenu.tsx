@@ -9,12 +9,12 @@ import { deleteInvoice, duplicateInvoice } from "@/app/(app)/invoices/actions";
 export default function InvoiceRowMenu({
   id,
   number,
-  clientEmail,
+  companyEmail,
   quick,
 }: {
   id: string;
   number: string;
-  clientEmail: string | null;
+  companyEmail: string | null;
   /** Also surface download and email as their own buttons (mobile cards). */
   quick?: boolean;
 }) {
@@ -126,7 +126,7 @@ export default function InvoiceRowMenu({
       {mailing && (
         <EmailDialog
           target={{ kind: "invoice", id }}
-          defaultTo={clientEmail ?? ""}
+          companyEmail={companyEmail}
           attachmentName={`${number}.pdf`}
           onClose={() => setMailing(false)}
         />

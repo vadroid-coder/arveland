@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ownedInvoiceOrNotFound } from "@/lib/guard";
 import InvoiceDocument from "@/components/InvoiceDocument";
-import PrintButton from "@/components/PrintButton";
+import DocumentScaler from "@/components/DocumentScaler";
 import StatusBadge from "@/components/StatusBadge";
 import SubmitButton from "@/components/SubmitButton";
-import { effectiveStatus, invoiceFileName } from "@/lib/invoice";
 import EmailButton from "@/components/EmailButton";
+import { effectiveStatus, invoiceFileName } from "@/lib/invoice";
 import { getT } from "@/lib/ui-language";
 import { deleteInvoice, duplicateInvoice, setInvoiceStatus } from "../actions";
 
@@ -28,70 +28,130 @@ export default async function InvoicePage({
 
   return (
     <div className="space-y-5">
-      <div className="no-print flex flex-wrap items-center gap-3">
-        <div className="mr-auto">
-          <Link href="/" className="text-sm text-ink-500 hover:underline">
-            {t.invoice.backToList}
-          </Link>
-          <div className="mt-1 flex items-center gap-3">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-              {invoice.number}
-            </h1>
-            <StatusBadge status={effectiveStatus(invoice)} />
-          </div>
-        </div>
-
-        {invoice.status !== "PAID" ? (
-          <form action={markPaid}>
-            <SubmitButton className="btn btn-ghost">{t.invoice.markPaid}</SubmitButton>
-          </form>
-        ) : (
-          <form action={markSent}>
-            <SubmitButton className="btn btn-ghost">
-              {t.invoice.unmarkPaid}
-            </SubmitButton>
-          </form>
-        )}
-        {invoice.status === "DRAFT" && (
-          <form action={markSent}>
-            <SubmitButton className="btn btn-ghost">
-              {t.invoice.markSent}
-            </SubmitButton>
-          </form>
-        )}
-        {invoice.status === "SENT" && (
-          <form action={markDraft}>
-            <SubmitButton className="btn btn-ghost">{t.invoice.backToDraft}</SubmitButton>
-          </form>
-        )}
-        <form action={duplicate}>
-          <SubmitButton className="btn btn-ghost">{t.invoice.duplicate}</SubmitButton>
-        </form>
-        <form action={remove}>
-          <SubmitButton
-            className="btn btn-danger"
-            confirm={t.invoice.confirmDelete(invoice.number)}
-          >
-            {t.common.delete}
-          </SubmitButton>
-        </form>
-        <Link href={`/invoices/${invoice.id}/edit`} className="btn btn-ghost">
-          {t.common.edit}
+      <div className="no-print">
+        <Link href="/" className="text-sm text-ink-500 hover:underline">
+          {t.invoice.backToList}
         </Link>
-        <a href={`/api/invoices/${invoice.id}/pdf`} className="btn btn-ghost">
-          {t.invoice.downloadPdf}
-        </a>
-        <EmailButton
-          target={{ kind: "invoice", id: invoice.id }}
-          defaultTo={invoice.clientEmail ?? ""}
-          attachmentName={invoiceFileName(invoice)}
-        />
-        <PrintButton />
+        <div className="mt-1 flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
+            {invoice.number}
+          </h1>
+          <StatusBadge status={effectiveStatus(invoice)} />
+        </div>
+      </div>
+
+      {/* Three groups, each a segmented block so they stay legible when they
+          wrap onto separate lines on a phone. */}
+      <div className="no-print flex flex-wrap gap-2">
+        {/* status as a segmented control — shorter than "mark as …" phrasing
+            and it shows where the invoice currently stands */}
+        <Group>
+          <form action={markDraft} className="contents">
+            <StatusButton current={invoice.status === "DRAFT"}>
+              {t.dashboard.statusDraft}
+            </StatusButton>
+          </form>
+          <form action={markSent} className="contents">
+            <StatusButton current={invoice.status === "SENT"}>
+              {t.dashboard.statusSent}
+            </StatusButton>
+          </form>
+          <form action={markPaid} className="contents">
+            <StatusButton current={invoice.status === "PAID"}>
+              {t.dashboard.statusPaid}
+            </StatusButton>
+          </form>
+        </Group>
+
+        <Group>
+          <Link
+            href={`/invoices/${invoice.id}/edit`}
+            className="px-3 py-2 text-sm font-medium whitespace-nowrap text-ink-700 transition hover:bg-ink-50"
+          >
+            {t.common.edit}
+          </Link>
+          <form action={duplicate} className="contents">
+            <GroupButton>{t.invoice.duplicate}</GroupButton>
+          </form>
+          <form action={remove} className="contents">
+            <SubmitButton
+              className="cursor-pointer px-3 py-2 text-sm font-medium whitespace-nowrap text-red-600 transition hover:bg-red-50"
+              confirm={t.invoice.confirmDelete(invoice.number)}
+            >
+              {t.common.delete}
+            </SubmitButton>
+          </form>
+        </Group>
+
+        <Group accent>
+          <a
+            href={`/api/invoices/${invoice.id}/pdf`}
+            className="px-3 py-2 text-sm font-medium whitespace-nowrap text-brand-700 transition hover:bg-brand-50"
+          >
+            {t.invoice.downloadPdf}
+          </a>
+          <EmailButton
+            target={{ kind: "invoice", id: invoice.id }}
+            companyEmail={invoice.business.email}
+            attachmentName={invoiceFileName(invoice)}
+            className="cursor-pointer px-3 py-2 text-sm font-medium whitespace-nowrap text-brand-700 transition hover:bg-brand-50"
+          />
+        </Group>
       </div>
 
       <div className="overflow-x-auto">
-        <InvoiceDocument business={invoice.business} invoice={invoice} />
+        <DocumentScaler>
+          <InvoiceDocument business={invoice.business} invoice={invoice} />
+        </DocumentScaler>
       </div>
     </div>
+  );
+}
+
+function Group({
+  children,
+  accent,
+}: {
+  children: React.ReactNode;
+  accent?: boolean;
+}) {
+  return (
+    <div
+      className={`inline-flex divide-x overflow-hidden rounded-lg border bg-white ${
+        accent
+          ? "divide-brand-200 border-brand-300"
+          : "divide-ink-200 border-ink-200"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function GroupButton({ children }: { children: React.ReactNode }) {
+  return (
+    <SubmitButton className="cursor-pointer px-3 py-2 text-sm font-medium whitespace-nowrap text-ink-700 transition hover:bg-ink-50">
+      {children}
+    </SubmitButton>
+  );
+}
+
+function StatusButton({
+  children,
+  current,
+}: {
+  children: React.ReactNode;
+  current: boolean;
+}) {
+  return (
+    <SubmitButton
+      className={`cursor-pointer px-3 py-2 text-sm whitespace-nowrap transition ${
+        current
+          ? "bg-ink-800 font-semibold text-white"
+          : "font-medium text-ink-600 hover:bg-ink-50"
+      }`}
+    >
+      {children}
+    </SubmitButton>
   );
 }

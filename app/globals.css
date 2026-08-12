@@ -104,4 +104,8 @@ body {
     border: 0 !important;
     margin: 0 !important;
   }
+  /* the on-screen fit-to-width scaling must not follow the page to paper */
+  .doc-scale {
+    zoom: 1 !important;
+  }
 }

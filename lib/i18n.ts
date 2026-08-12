@@ -133,7 +133,6 @@ const RU = {
     markSent: "Отметить отправленным",
     backToDraft: "Вернуть в черновик",
     duplicate: "Дублировать",
-    print: "Печать / PDF",
     confirmDelete: (n: string) => `Удалить счёт ${n}?`,
     errBusiness: "Компания не найдена",
     errInvoice: "Счёт не найден",
@@ -259,8 +258,8 @@ const RU = {
       `Удалить пользователя ${email}? Вместе с ним будут удалены его компании (${n}), клиенты и счета. Это необратимо.`,
   },
   mail: {
-    title: "Отправить на почту",
-    recipient: "E-mail получателя",
+    title: "Отправить себе на почту",
+    toCompany: "Письмо уйдёт на почту компании:",
     send: "Отправить",
     sending: "Отправляю…",
     attachment: (name: string) => `Вложение: ${name}`,
@@ -268,7 +267,9 @@ const RU = {
     errAuth: "Нужно войти заново",
     errNotConfigured:
       "Отправка почты не настроена — задайте RESEND_API_KEY и SENDER_EMAIL",
-    errRecipient: "Укажите корректный e-mail",
+    errNoCompanyEmail:
+      "У компании не указан e-mail. Добавьте его в настройках компании — письма уходят только на этот адрес.",
+    openBusiness: "Настройки компании",
     errNothing: "За этот месяц счетов нет",
   },
   settings: {
@@ -414,7 +415,6 @@ const ET: Dict = {
     markSent: "Märgi saadetuks",
     backToDraft: "Tagasi mustandiks",
     duplicate: "Dubleeri",
-    print: "Prindi / PDF",
     confirmDelete: (n: string) => `Kustutada arve ${n}?`,
     errBusiness: "Ettevõtet ei leitud",
     errInvoice: "Arvet ei leitud",
@@ -537,8 +537,8 @@ const ET: Dict = {
       `Kustutada kasutaja ${email}? Koos temaga kustuvad tema ettevõtted (${n}), kliendid ja arved. Seda ei saa tagasi võtta.`,
   },
   mail: {
-    title: "Saada e-postiga",
-    recipient: "Saaja e-post",
+    title: "Saada endale e-postiga",
+    toCompany: "Kiri läheb ettevõtte e-postile:",
     send: "Saada",
     sending: "Saadan…",
     attachment: (name: string) => `Manus: ${name}`,
@@ -546,7 +546,9 @@ const ET: Dict = {
     errAuth: "Logi uuesti sisse",
     errNotConfigured:
       "E-posti saatmine pole seadistatud — määra RESEND_API_KEY ja SENDER_EMAIL",
-    errRecipient: "Sisesta korrektne e-post",
+    errNoCompanyEmail:
+      "Ettevõttel pole e-posti aadressi. Lisa see ettevõtte seadetesse — kirjad lähevad ainult sellele aadressile.",
+    openBusiness: "Ettevõtte seaded",
     errNothing: "Selles kuus arveid pole",
   },
   settings: {
@@ -689,7 +691,6 @@ const EN: Dict = {
     markSent: "Mark as sent",
     backToDraft: "Back to draft",
     duplicate: "Duplicate",
-    print: "Print / PDF",
     confirmDelete: (n: string) => `Delete invoice ${n}?`,
     errBusiness: "Company not found",
     errInvoice: "Invoice not found",
@@ -817,8 +818,8 @@ const EN: Dict = {
       `Delete user ${email}? Their companies (${n}), clients and invoices go with them. This cannot be undone.`,
   },
   mail: {
-    title: "Send by email",
-    recipient: "Recipient email",
+    title: "Email it to yourself",
+    toCompany: "The email goes to the company address:",
     send: "Send",
     sending: "Sending…",
     attachment: (name: string) => `Attachment: ${name}`,
@@ -826,7 +827,9 @@ const EN: Dict = {
     errAuth: "Please sign in again",
     errNotConfigured:
       "Email sending is not configured — set RESEND_API_KEY and SENDER_EMAIL",
-    errRecipient: "Enter a valid email address",
+    errNoCompanyEmail:
+      "This company has no email address. Add one in the company settings — mail only ever goes there.",
+    openBusiness: "Company settings",
     errNothing: "No invoices in this month",
   },
   settings: {
