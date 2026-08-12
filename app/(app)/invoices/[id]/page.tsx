@@ -5,6 +5,7 @@ import DocumentScaler from "@/components/DocumentScaler";
 import StatusBadge from "@/components/StatusBadge";
 import SubmitButton from "@/components/SubmitButton";
 import EmailButton from "@/components/EmailButton";
+import SharePdfButton from "@/components/SharePdfButton";
 import { effectiveStatus, invoiceFileName } from "@/lib/invoice";
 import { getT } from "@/lib/ui-language";
 import { deleteInvoice, duplicateInvoice, setInvoiceStatus } from "../actions";
@@ -66,7 +67,7 @@ export default async function InvoicePage({
         <Group>
           <Link
             href={`/invoices/${invoice.id}/edit`}
-            className="px-3 py-2 text-sm font-medium whitespace-nowrap text-ink-700 transition hover:bg-ink-50"
+            className="bg-white flex-1 justify-center px-3 py-2 text-center text-sm font-medium whitespace-nowrap sm:flex-none text-ink-700 transition hover:bg-ink-50"
           >
             {t.common.edit}
           </Link>
@@ -75,7 +76,7 @@ export default async function InvoicePage({
           </form>
           <form action={remove} className="contents">
             <SubmitButton
-              className="cursor-pointer px-3 py-2 text-sm font-medium whitespace-nowrap text-red-600 transition hover:bg-red-50"
+              className="cursor-pointer bg-white flex-1 justify-center px-3 py-2 text-center text-sm font-medium whitespace-nowrap sm:flex-none text-red-600 transition hover:bg-red-50"
               confirm={t.invoice.confirmDelete(invoice.number)}
             >
               {t.common.delete}
@@ -86,15 +87,21 @@ export default async function InvoicePage({
         <Group accent>
           <a
             href={`/api/invoices/${invoice.id}/pdf`}
-            className="px-3 py-2 text-sm font-medium whitespace-nowrap text-brand-700 transition hover:bg-brand-50"
+            className="bg-white flex-1 justify-center px-3 py-2 text-center text-sm font-medium whitespace-nowrap sm:flex-none text-brand-700 transition hover:bg-brand-50"
           >
             {t.invoice.downloadPdf}
           </a>
+          <SharePdfButton
+            id={invoice.id}
+            fileName={invoiceFileName(invoice)}
+            title={invoice.number}
+            className="cursor-pointer bg-white flex-1 justify-center px-3 py-2 text-center text-sm font-medium whitespace-nowrap sm:flex-none text-brand-700 transition hover:bg-brand-50 disabled:opacity-50"
+          />
           <EmailButton
             target={{ kind: "invoice", id: invoice.id }}
             companyEmail={invoice.business.email}
             attachmentName={invoiceFileName(invoice)}
-            className="cursor-pointer px-3 py-2 text-sm font-medium whitespace-nowrap text-brand-700 transition hover:bg-brand-50"
+            className="cursor-pointer bg-white flex-1 justify-center px-3 py-2 text-center text-sm font-medium whitespace-nowrap sm:flex-none text-brand-700 transition hover:bg-brand-50"
           />
         </Group>
       </div>
@@ -117,10 +124,10 @@ function Group({
 }) {
   return (
     <div
-      className={`inline-flex divide-x overflow-hidden rounded-lg border bg-white ${
+      className={`flex w-full flex-wrap gap-px overflow-hidden rounded-lg border sm:inline-flex sm:w-auto ${
         accent
-          ? "divide-brand-200 border-brand-300"
-          : "divide-ink-200 border-ink-200"
+          ? "border-brand-300 bg-brand-200"
+          : "border-ink-200 bg-ink-200"
       }`}
     >
       {children}
@@ -130,7 +137,7 @@ function Group({
 
 function GroupButton({ children }: { children: React.ReactNode }) {
   return (
-    <SubmitButton className="cursor-pointer px-3 py-2 text-sm font-medium whitespace-nowrap text-ink-700 transition hover:bg-ink-50">
+    <SubmitButton className="cursor-pointer bg-white flex-1 justify-center px-3 py-2 text-center text-sm font-medium whitespace-nowrap sm:flex-none text-ink-700 transition hover:bg-ink-50">
       {children}
     </SubmitButton>
   );
@@ -145,10 +152,10 @@ function StatusButton({
 }) {
   return (
     <SubmitButton
-      className={`cursor-pointer px-3 py-2 text-sm whitespace-nowrap transition ${
+      className={`cursor-pointer flex-1 justify-center px-3 py-2 text-center text-sm whitespace-nowrap transition sm:flex-none ${
         current
           ? "bg-ink-800 font-semibold text-white"
-          : "font-medium text-ink-600 hover:bg-ink-50"
+          : "bg-white font-medium text-ink-600 hover:bg-ink-50"
       }`}
     >
       {children}
