@@ -65,14 +65,31 @@ if (!process.env.AUTH_SECRET && (process.env.VERCEL || process.env.CI)) {
 }
 
 const schema = readFileSync(schemaPath, "utf8");
-const next = schema.replace(
+
+let next = schema.replace(
   /(datasource\s+db\s*\{[^}]*?provider\s*=\s*")[^"]+(")/s,
   `$1${wanted}$2`,
 );
 
+// Pooled connections (Neon's pgbouncer endpoint) are right for queries but not
+// for the DDL `prisma db push` issues. When the provider gives us a direct
+// endpoint as well, point schema changes at it and leave queries on the pool.
+const useDirectUrl = wanted === "postgresql" && !!process.env.DATABASE_URL_UNPOOLED;
+
+next = next.replace(/^\s*directUrl\s*=.*\n/m, "");
+if (useDirectUrl) {
+  next = next.replace(
+    /(datasource\s+db\s*\{[^}]*?url\s*=\s*env\("DATABASE_URL"\)\n)/s,
+    `$1  directUrl = env("DATABASE_URL_UNPOOLED")\n`,
+  );
+}
+
 if (next !== schema) {
   writeFileSync(schemaPath, next);
-  console.log(`[db-provider] datasource provider -> ${wanted}`);
+  console.log(
+    `[db-provider] datasource provider -> ${wanted}` +
+      (useDirectUrl ? " (schema changes via DATABASE_URL_UNPOOLED)" : ""),
+  );
 } else {
   console.log(`[db-provider] datasource provider already ${wanted}`);
 }

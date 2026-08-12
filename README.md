@@ -62,14 +62,17 @@ server actions отказывают без записи. Ни один id из U
 
 1. Завести бесплатную PostgreSQL-базу — проще всего Neon (см. таблицу выше).
 2. Импортировать репозиторий в Vercel.
-3. Задать в Project → Settings → Environment Variables **две** переменные:
+3. Задать в Project → Settings → Environment Variables:
 
-   | Переменная     | Значение                                        |
-   | -------------- | ----------------------------------------------- |
-   | `DATABASE_URL` | строка подключения (pooled, `?sslmode=require`) |
-   | `AUTH_SECRET`  | вывод `openssl rand -base64 32`                 |
+   | Переменная               | Обяз. | Значение                                                        |
+   | ------------------------ | ----- | --------------------------------------------------------------- |
+   | `DATABASE_URL`           | да    | pooled-строка (хост с `-pooler`) — по ней идут запросы           |
+   | `AUTH_SECRET`            | да    | вывод `openssl rand -base64 32`                                  |
+   | `DATABASE_URL_UNPOOLED`  | жел.  | прямая строка (хост без `-pooler`) — по ней идут изменения схемы |
 
-   Выставить их для Production, Preview и Development — сборка падает без `DATABASE_URL`.
+   Выставить для Production, Preview и Development — сборка падает без `DATABASE_URL`.
+   Neon отдаёт обе строки на вкладке Connect; при подключении через Vercel Marketplace
+   они добавляются автоматически.
 
 4. Deploy. Скрипт сборки сам определяет провайдера Prisma и делает `prisma db push` — миграции не нужны.
 5. Открыть домен, `/setup` предложит создать первого администратора.
@@ -78,6 +81,9 @@ server actions отказывают без записи. Ни один id из U
 (`postgresql://` → postgresql, `file:` → sqlite). Переопределить можно переменной `DATABASE_PROVIDER`, но обычно
 это не нужно. Если на хостинге `DATABASE_URL` не задан, сборка падает сразу с понятным сообщением, а не с
 ошибкой валидации схемы Prisma.
+
+Если задан `DATABASE_URL_UNPOOLED`, скрипт добавляет в схему `directUrl`: запросы идут через пул,
+а DDL из `prisma db push` — напрямую, минуя pgbouncer (pgbouncer в transaction-режиме плохо переносит DDL).
 
 ## Структура
 
