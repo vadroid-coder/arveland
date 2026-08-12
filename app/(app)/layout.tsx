@@ -24,15 +24,15 @@ export default async function AppLayout({
     <I18nProvider language={language}>
       <div className="min-h-screen">
         <header className="no-print bg-ink-900 text-white">
-          <div className="mx-auto flex h-14 max-w-7xl items-center gap-4 px-5">
+          <div className="mx-auto flex h-14 max-w-7xl items-center gap-2 px-3 sm:gap-4 sm:px-5">
             <Link href="/" className="flex shrink-0 items-center gap-2.5">
               <Logo className="h-7 w-7" />
-              <span className="text-[15px] font-semibold tracking-tight">
+              <span className="hidden text-[15px] font-semibold tracking-tight sm:inline">
                 ArveMaa
               </span>
             </Link>
 
-            <span className="h-5 w-px bg-white/15" />
+            <span className="hidden h-5 w-px bg-white/15 sm:block" />
 
             <BusinessSwitcher
               businesses={businesses.map((b) => ({
@@ -44,9 +44,10 @@ export default async function AppLayout({
               activeId={active?.id ?? null}
             />
 
-            <div className="flex-1" />
-
-            <Link href="/settings" className="hidden text-right sm:block">
+            <Link
+              href="/settings"
+              className="ml-auto hidden shrink-0 text-right sm:block"
+            >
               <p className="text-[13px] leading-tight font-medium hover:underline">
                 {user.name}
               </p>
@@ -54,8 +55,8 @@ export default async function AppLayout({
                 {user.role === "ADMIN" ? t.nav.admin : t.nav.user}
               </p>
             </Link>
-            <form action={logout}>
-              <button className="rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-white/80 transition hover:bg-white/10">
+            <form action={logout} className="shrink-0">
+              <button className="rounded-lg border border-white/15 px-2.5 py-1.5 text-xs whitespace-nowrap text-white/80 transition hover:bg-white/10">
                 {t.nav.logout}
               </button>
             </form>

@@ -296,7 +296,7 @@ export default async function DashboardPage({
                         </div>
                       </dl>
 
-                      <div className="mt-3 flex items-center gap-2">
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
                         <InvoiceRowMenu
                           id={inv.id}
                           number={inv.number}

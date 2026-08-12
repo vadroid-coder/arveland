@@ -210,7 +210,7 @@ export default function InvoiceEditor({
   return (
     <div className="space-y-5">
       <section className="card p-5">
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold text-ink-700">{t.invoice.client}</h2>
           <Link href="/clients" className="text-xs text-brand-600 hover:underline">
             {t.invoice.manageClients}
@@ -458,36 +458,45 @@ export default function InvoiceEditor({
         </p>
       )}
 
-      <div className="sticky bottom-0 flex items-center gap-3 border-t border-ink-200 bg-ink-50/90 py-3 backdrop-blur">
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={submit}
-          disabled={pending || !clientReady}
-        >
-          {pending
-            ? t.common.saving
-            : invoice
-              ? t.common.saveChanges
-              : t.invoice.create}
-        </button>
-        <Link
-          href={invoice ? `/invoices/${invoice.id}` : "/"}
-          className="btn btn-ghost"
-        >
-          {t.common.cancel}
-        </Link>
+      <div className="sticky bottom-0 space-y-2 border-t border-ink-200 bg-ink-50/90 py-3 backdrop-blur">
+        {/* the hint needs its own line on a phone, or it squeezes into a column */}
         {!clientReady && (
-          <span className="text-xs text-ink-400">
+          <p className="text-xs text-ink-400 sm:hidden">
             {t.invoice.clientRequired}
-          </span>
+          </p>
         )}
-        <span className="ml-auto text-sm text-ink-500">
-          {t.common.total}{" "}
-          <span className="font-semibold text-ink-900 tabular-nums">
-            {formatMoney(totals.total, business.currency)}
+        {/* wrap, or the row's min-width forces the whole page to zoom out */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={submit}
+            disabled={pending || !clientReady}
+          >
+            {pending
+              ? t.common.saving
+              : invoice
+                ? t.common.saveChanges
+                : t.invoice.create}
+          </button>
+          <Link
+            href={invoice ? `/invoices/${invoice.id}` : "/"}
+            className="btn btn-ghost"
+          >
+            {t.common.cancel}
+          </Link>
+          {!clientReady && (
+            <span className="hidden text-xs text-ink-400 sm:inline">
+              {t.invoice.clientRequired}
+            </span>
+          )}
+          <span className="ml-auto text-sm whitespace-nowrap text-ink-500">
+            {t.common.total}{" "}
+            <span className="font-semibold text-ink-900 tabular-nums">
+              {formatMoney(totals.total, business.currency)}
+            </span>
           </span>
-        </span>
+        </div>
       </div>
     </div>
   );

@@ -90,7 +90,7 @@ export default function ClientPicker({
     return (
       <div className="rounded-lg border border-ink-200 bg-ink-50/60 p-4">
         <div className="flex items-start justify-between gap-3">
-          <div className="text-sm">
+          <div className="min-w-0 flex-1 text-sm break-words">
             <p className="font-semibold text-ink-900">{selected.name}</p>
             <p className="text-ink-500">
               {t.client.colReg} {selected.regNumber}

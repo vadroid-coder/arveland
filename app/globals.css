@@ -40,35 +40,38 @@ body {
 }
 
 /* ---------- form primitives ---------- */
-.field {
-  @apply block w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 shadow-xs outline-none transition;
-}
-.field:focus {
-  @apply border-brand-500 ring-2 ring-brand-500/20;
-}
-.field:disabled {
-  @apply bg-ink-100 text-ink-400;
-}
-.label {
-  @apply mb-1.5 block text-xs font-medium tracking-wide text-ink-500 uppercase;
-}
-.btn {
-  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition select-none disabled:cursor-not-allowed disabled:opacity-50;
-}
-.btn-primary {
-  @apply bg-brand-600 text-white hover:bg-brand-700;
-}
-.btn-ghost {
-  @apply border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
-}
-.btn-danger {
-  @apply border border-red-200 bg-white text-red-600 hover:bg-red-50;
-}
-.card {
-  @apply rounded-xl border border-ink-200 bg-white shadow-xs;
-}
-.badge {
-  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+/* In @layer so utility classes on the same element override these. */
+@layer components {
+  .field {
+    @apply block w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 shadow-xs outline-none transition;
+  }
+  .field:focus {
+    @apply border-brand-500 ring-2 ring-brand-500/20;
+  }
+  .field:disabled {
+    @apply bg-ink-100 text-ink-400;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium tracking-wide text-ink-500 uppercase;
+  }
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium whitespace-nowrap transition select-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white hover:bg-brand-700;
+  }
+  .btn-ghost {
+    @apply border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
+  }
+  .btn-danger {
+    @apply border border-red-200 bg-white text-red-600 hover:bg-red-50;
+  }
+  .card {
+    @apply rounded-xl border border-ink-200 bg-white shadow-xs;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+  }
 }
 
 /* ---------- printable invoice ---------- */

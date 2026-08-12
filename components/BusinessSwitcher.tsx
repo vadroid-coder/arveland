@@ -42,23 +42,32 @@ export default function BusinessSwitcher({
 
   if (businesses.length === 0) {
     return (
-      <Link href="/businesses/new" className="btn btn-primary h-9">
+      <Link href="/businesses/new" className="btn btn-primary h-9 shrink-0">
         {t.business.switcherAdd}
       </Link>
     );
   }
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative min-w-0 flex-1 sm:flex-none" ref={ref}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         disabled={pending}
-        className="flex h-9 items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-2.5 text-sm font-medium text-white transition hover:bg-white/15"
+        className="flex h-9 w-full items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-2.5 text-sm font-medium text-white transition hover:bg-white/15 sm:w-auto"
       >
         <Avatar item={active} />
-        <span className="max-w-[13rem] truncate">{active?.name ?? "—"}</span>
-        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden>
+        <span className="min-w-0 flex-1 truncate text-left sm:max-w-[13rem] sm:flex-none">
+          {active?.name ?? "—"}
+        </span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 20 20"
+          fill="none"
+          className="shrink-0"
+          aria-hidden
+        >
           <path
             d="M6 8l4 4 4-4"
             stroke="currentColor"

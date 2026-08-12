@@ -47,3 +47,7 @@ prisma/dev.db*
 
 # keep the template
 !.env.example
+
+# scratch scripts
+*.tmp.mjs
+*.tmp.json
