@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useT } from "./I18nProvider";
 
 const MAX_BYTES = 400 * 1024; // keep the data URL small enough for the DB
 
 export default function LogoUpload({ initial }: { initial?: string | null }) {
+  const t = useT();
   const [value, setValue] = useState(initial ?? "");
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -13,12 +15,12 @@ export default function LogoUpload({ initial }: { initial?: string | null }) {
     setError("");
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      setError("Выберите файл изображения (PNG, JPG, SVG)");
+      setError(t.business.logoErrType);
       return;
     }
     const dataUrl = await downscale(file);
     if (dataUrl.length > MAX_BYTES * 1.4) {
-      setError("Файл слишком большой — используйте логотип поменьше");
+      setError(t.business.logoErrSize);
       return;
     }
     setValue(dataUrl);
@@ -26,7 +28,7 @@ export default function LogoUpload({ initial }: { initial?: string | null }) {
 
   return (
     <div>
-      <label className="label">Логотип</label>
+      <label className="label">{t.business.logo}</label>
       <input type="hidden" name="logo" value={value} />
       <div className="flex items-center gap-4">
         <div className="grid h-20 w-32 shrink-0 place-items-center overflow-hidden rounded-lg border border-dashed border-ink-300 bg-ink-50">
@@ -38,7 +40,7 @@ export default function LogoUpload({ initial }: { initial?: string | null }) {
               className="max-h-full max-w-full object-contain"
             />
           ) : (
-            <span className="text-xs text-ink-400">Нет логотипа</span>
+            <span className="text-xs text-ink-400">{t.business.logoNone}</span>
           )}
         </div>
         <div className="space-y-2">
@@ -55,7 +57,7 @@ export default function LogoUpload({ initial }: { initial?: string | null }) {
               className="btn btn-ghost"
               onClick={() => inputRef.current?.click()}
             >
-              Загрузить
+              {t.business.logoUpload}
             </button>
             {value && (
               <button
@@ -63,12 +65,12 @@ export default function LogoUpload({ initial }: { initial?: string | null }) {
                 className="btn btn-danger"
                 onClick={() => setValue("")}
               >
-                Удалить
+                {t.business.logoRemove}
               </button>
             )}
           </div>
           <p className="text-xs text-ink-400">
-            Показывается в левом верхнем углу счёта. PNG/JPG/SVG, до ~400 КБ.
+            {t.business.logoHint}
           </p>
           {error && <p className="text-xs text-red-600">{error}</p>}
         </div>

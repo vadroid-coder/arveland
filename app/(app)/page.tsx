@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getActiveBusiness } from "@/lib/business";
 import { formatMoney } from "@/lib/money";
 import { effectiveStatus, formatDate, monthLabel } from "@/lib/invoice";
+import { getT } from "@/lib/ui-language";
 import StatusBadge from "@/components/StatusBadge";
 import EmptyBusiness from "@/components/EmptyBusiness";
 
@@ -15,6 +16,8 @@ export default async function DashboardPage({
 }) {
   const { active } = await getActiveBusiness();
   if (!active) return <EmptyBusiness />;
+
+  const t = await getT();
 
   const sp = await searchParams;
   const year = Number(sp.year) || new Date().getFullYear();
@@ -76,26 +79,29 @@ export default async function DashboardPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-            Счета
+            {t.dashboard.title}
           </h1>
           <p className="text-sm text-ink-500">
-            {active.name} · счетов за {year}: {invoices.length}
+            {active.name} · {t.dashboard.countForYear(invoices.length, year)}
           </p>
         </div>
         <Link href="/invoices/new" className="btn btn-primary">
-          + Новый счёт
+          {t.dashboard.newInvoice}
         </Link>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Всего" value={formatMoney(totals.total, active.currency)} />
         <Stat
-          label="Оплачено"
+          label={t.dashboard.statTotal}
+          value={formatMoney(totals.total, active.currency)}
+        />
+        <Stat
+          label={t.dashboard.statPaid}
           value={formatMoney(totals.paid, active.currency)}
           tone="text-emerald-600"
         />
         <Stat
-          label="Не оплачено"
+          label={t.dashboard.statUnpaid}
           value={formatMoney(totals.open, active.currency)}
           tone="text-amber-600"
         />
@@ -103,16 +109,16 @@ export default async function DashboardPage({
 
       <form className="card flex flex-wrap items-end gap-3 p-3">
         <div className="min-w-[10rem] flex-1">
-          <label className="label">Поиск</label>
+          <label className="label">{t.common.search}</label>
           <input
             name="q"
             defaultValue={q}
             className="field"
-            placeholder="Номер счёта, клиент, рег. код"
+            placeholder={t.dashboard.searchPlaceholder}
           />
         </div>
         <div>
-          <label className="label">Год</label>
+          <label className="label">{t.common.year}</label>
           <select name="year" defaultValue={year} className="field w-28">
             {yearOptions.map((y) => (
               <option key={y} value={y}>
@@ -122,23 +128,23 @@ export default async function DashboardPage({
           </select>
         </div>
         <div>
-          <label className="label">Статус</label>
+          <label className="label">{t.common.status}</label>
           <select name="status" defaultValue={status} className="field w-40">
-            <option value="">Все</option>
-            <option value="DRAFT">Черновик</option>
-            <option value="SENT">Отправлен</option>
-            <option value="PAID">Оплачен</option>
-            <option value="UNPAID">Не оплачен</option>
+            <option value="">{t.common.all}</option>
+            <option value="DRAFT">{t.dashboard.statusDraft}</option>
+            <option value="SENT">{t.dashboard.statusSent}</option>
+            <option value="PAID">{t.dashboard.statusPaid}</option>
+            <option value="UNPAID">{t.dashboard.statusUnpaid}</option>
           </select>
         </div>
-        <button className="btn btn-ghost">Фильтр</button>
+        <button className="btn btn-ghost">{t.common.filter}</button>
       </form>
 
       {invoices.length === 0 ? (
         <div className="card p-12 text-center">
-          <p className="text-sm text-ink-500">Счета не найдены.</p>
+          <p className="text-sm text-ink-500">{t.dashboard.empty}</p>
           <Link href="/invoices/new" className="btn btn-primary mt-4">
-            Создать первый счёт
+            {t.dashboard.createFirst}
           </Link>
         </div>
       ) : (
@@ -149,25 +155,25 @@ export default async function DashboardPage({
               <section key={month} className="card overflow-hidden">
                 <header className="flex items-center justify-between border-b border-ink-100 bg-ink-50/60 px-4 py-2.5">
                   <h2 className="text-sm font-semibold text-ink-700">
-                    {monthLabel(year, month)}
+                    {monthLabel(year, month, t.months)}
                   </h2>
                   <p className="text-sm text-ink-500">
-                    счетов: {list.length} ·{" "}
+                    {t.dashboard.invoiceCount(list.length)} ·{" "}
                     <span className="font-semibold text-ink-800">
-                      {formatMoney(monthTotal, active.currency)}
+                      {formatMoney(monthTotal, active.currency, t.locale)}
                     </span>
                   </p>
                 </header>
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-ink-100 text-left text-xs tracking-wide text-ink-400 uppercase">
-                      <th className="px-4 py-2 font-medium">Номер</th>
-                      <th className="px-4 py-2 font-medium">Клиент</th>
-                      <th className="px-4 py-2 font-medium">Дата</th>
-                      <th className="px-4 py-2 font-medium">Срок оплаты</th>
-                      <th className="px-4 py-2 font-medium">Статус</th>
+                      <th className="px-4 py-2 font-medium">{t.dashboard.colNumber}</th>
+                      <th className="px-4 py-2 font-medium">{t.dashboard.colClient}</th>
+                      <th className="px-4 py-2 font-medium">{t.dashboard.colDate}</th>
+                      <th className="px-4 py-2 font-medium">{t.dashboard.colDue}</th>
+                      <th className="px-4 py-2 font-medium">{t.dashboard.colStatus}</th>
                       <th className="px-4 py-2 text-right font-medium">
-                        Сумма
+                        {t.dashboard.colAmount}
                       </th>
                     </tr>
                   </thead>
@@ -194,16 +200,16 @@ export default async function DashboardPage({
                           </span>
                         </td>
                         <td className="px-4 py-2.5 text-ink-600">
-                          {formatDate(inv.issueDate)}
+                          {formatDate(inv.issueDate, t.locale)}
                         </td>
                         <td className="px-4 py-2.5 text-ink-600">
-                          {formatDate(inv.dueDate)}
+                          {formatDate(inv.dueDate, t.locale)}
                         </td>
                         <td className="px-4 py-2.5">
                           <StatusBadge status={effectiveStatus(inv)} />
                         </td>
                         <td className="px-4 py-2.5 text-right font-medium tabular-nums">
-                          {formatMoney(inv.total, inv.currency)}
+                          {formatMoney(inv.total, inv.currency, t.locale)}
                         </td>
                       </tr>
                     ))}

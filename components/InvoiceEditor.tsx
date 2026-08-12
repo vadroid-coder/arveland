@@ -18,6 +18,7 @@ import {
   toCents,
 } from "@/lib/money";
 import { DOC_LANGUAGES } from "@/lib/doc-language";
+import { useT } from "./I18nProvider";
 import { saveInvoice, type InvoicePayload } from "@/app/(app)/invoices/actions";
 
 type Line = {
@@ -90,6 +91,7 @@ export default function InvoiceEditor({
   numberPreview: string;
   invoice?: EditorInvoice;
 }) {
+  const t = useT();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -209,9 +211,9 @@ export default function InvoiceEditor({
     <div className="space-y-5">
       <section className="card p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-ink-700">Клиент</h2>
+          <h2 className="text-sm font-semibold text-ink-700">{t.invoice.client}</h2>
           <Link href="/clients" className="text-xs text-brand-600 hover:underline">
-            Управление клиентами
+            {t.invoice.manageClients}
           </Link>
         </div>
         <ClientPicker
@@ -227,11 +229,11 @@ export default function InvoiceEditor({
 
       <section className="card p-5">
         <h2 className="mb-4 text-sm font-semibold text-ink-700">
-          Данные счёта
+          {t.invoice.details}
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div>
-            <label className="label">Номер счёта</label>
+            <label className="label">{t.invoice.number}</label>
             <input
               className="field bg-ink-50 font-medium"
               value={invoice?.number ?? numberPreview}
@@ -239,12 +241,12 @@ export default function InvoiceEditor({
             />
             {!invoice && (
               <p className="mt-1 text-xs text-ink-400">
-                Присваивается при сохранении
+                {t.invoice.numberAssigned}
               </p>
             )}
           </div>
           <div>
-            <label className="label">Дата выставления</label>
+            <label className="label">{t.invoice.issueDate}</label>
             <input
               type="date"
               className="field"
@@ -253,7 +255,7 @@ export default function InvoiceEditor({
             />
           </div>
           <div>
-            <label className="label">Срок оплаты</label>
+            <label className="label">{t.invoice.dueDate}</label>
             <input
               type="date"
               className="field"
@@ -265,12 +267,12 @@ export default function InvoiceEditor({
             />
             {!dueTouched && (
               <p className="mt-1 text-xs text-ink-400">
-                +{business.paymentTermDays} дн.
+                {t.invoice.dueHint(business.paymentTermDays)}
               </p>
             )}
           </div>
           <div>
-            <label className="label">Язык документа</label>
+            <label className="label">{t.invoice.docLanguage}</label>
             <select
               className="field"
               value={language}
@@ -282,34 +284,34 @@ export default function InvoiceEditor({
                 </option>
               ))}
             </select>
-            <p className="mt-1 text-xs text-ink-400">Только на печати</p>
+            <p className="mt-1 text-xs text-ink-400">{t.invoice.docLanguageHint}</p>
           </div>
           <div>
-            <label className="label">Статус</label>
+            <label className="label">{t.common.status}</label>
             <select
               className="field"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-              <option value="DRAFT">Черновик</option>
-              <option value="SENT">Отправлен</option>
-              <option value="PAID">Оплачен</option>
+              <option value="DRAFT">{t.dashboard.statusDraft}</option>
+              <option value="SENT">{t.dashboard.statusSent}</option>
+              <option value="PAID">{t.dashboard.statusPaid}</option>
             </select>
           </div>
         </div>
       </section>
 
       <section className="card overflow-visible p-5">
-        <h2 className="mb-4 text-sm font-semibold text-ink-700">Позиции</h2>
+        <h2 className="mb-4 text-sm font-semibold text-ink-700">{t.invoice.lines}</h2>
 
         <div className="space-y-2">
           <div className="hidden gap-2 px-1 text-xs tracking-wide text-ink-400 uppercase lg:grid lg:grid-cols-[1fr_5rem_8rem_7rem_6rem_8rem_2rem]">
-            <span>Наименование</span>
-            <span className="text-right">Кол-во</span>
-            <span className="text-right">Сумма</span>
-            <span className="text-center">Режим</span>
-            <span className="text-right">Налог</span>
-            <span className="text-right">Итого</span>
+            <span>{t.invoice.colDescription}</span>
+            <span className="text-right">{t.invoice.colQuantity}</span>
+            <span className="text-right">{t.invoice.colAmount}</span>
+            <span className="text-center">{t.invoice.colMode}</span>
+            <span className="text-right">{t.invoice.colTax}</span>
+            <span className="text-right">{t.invoice.colTotal}</span>
             <span />
           </div>
 
@@ -322,7 +324,7 @@ export default function InvoiceEditor({
               >
                 <input
                   className="field"
-                  placeholder="Название услуги или товара"
+                  placeholder={t.invoice.linePlaceholder}
                   value={line.description}
                   onChange={(e) =>
                     patchLine(line.key, { description: e.target.value })
@@ -368,7 +370,7 @@ export default function InvoiceEditor({
                     )
                   }
                   className="grid h-9 w-8 place-items-center rounded-lg text-ink-400 transition hover:bg-red-50 hover:text-red-600"
-                  title="Удалить строку"
+                  title={t.invoice.deleteLine}
                 >
                   ×
                 </button>
@@ -382,27 +384,29 @@ export default function InvoiceEditor({
           className="btn btn-ghost mt-3"
           onClick={() => setLines((ls) => [...ls, blankLine(defaultRate)])}
         >
-          + Добавить строку
+          {t.invoice.addLine}
         </button>
 
         <div className="mt-6 flex justify-end">
           <dl className="w-full max-w-xs space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-ink-500">Сумма без налога</dt>
+              <dt className="text-ink-500">{t.invoice.subtotal}</dt>
               <dd className="tabular-nums">
                 {formatMoney(totals.subtotal, business.currency)}
               </dd>
             </div>
             {breakdown.map((b) => (
               <div key={b.rate} className="flex justify-between">
-                <dt className="text-ink-500">Налог {formatRate(b.rate)}</dt>
+                <dt className="text-ink-500">
+                  {t.invoice.tax} {formatRate(b.rate)}
+                </dt>
                 <dd className="tabular-nums">
                   {formatMoney(b.tax, business.currency)}
                 </dd>
               </div>
             ))}
             <div className="flex justify-between border-t border-ink-200 pt-2 text-base font-semibold">
-              <dt>Итого</dt>
+              <dt>{t.common.total}</dt>
               <dd className="tabular-nums">
                 {formatMoney(totals.total, business.currency)}
               </dd>
@@ -412,13 +416,13 @@ export default function InvoiceEditor({
       </section>
 
       <section className="card p-5">
-        <label className="label">Примечание на счёте</label>
+        <label className="label">{t.invoice.notes}</label>
         <textarea
           rows={3}
           className="field"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Свободный текст в конце документа — печатается как есть, на языке, на котором вы его напишете"
+          placeholder={t.invoice.notesPlaceholder}
         />
       </section>
 
@@ -436,24 +440,24 @@ export default function InvoiceEditor({
           disabled={pending || !clientReady}
         >
           {pending
-            ? "Сохраняю…"
+            ? t.common.saving
             : invoice
-              ? "Сохранить изменения"
-              : "Создать счёт"}
+              ? t.common.saveChanges
+              : t.invoice.create}
         </button>
         <Link
           href={invoice ? `/invoices/${invoice.id}` : "/"}
           className="btn btn-ghost"
         >
-          Отмена
+          {t.common.cancel}
         </Link>
         {!clientReady && (
           <span className="text-xs text-ink-400">
-            Выберите клиента или введите название и рег. номер
+            {t.invoice.clientRequired}
           </span>
         )}
         <span className="ml-auto text-sm text-ink-500">
-          Итого{" "}
+          {t.common.total}{" "}
           <span className="font-semibold text-ink-900 tabular-nums">
             {formatMoney(totals.total, business.currency)}
           </span>
@@ -470,6 +474,7 @@ function ModeToggle({
   value: "NET" | "INCL";
   onChange: (v: "NET" | "INCL") => void;
 }) {
+  const t = useT();
   return (
     <div className="flex h-9 items-center rounded-lg border border-ink-200 bg-ink-50 p-0.5 text-xs font-medium">
       {(["NET", "INCL"] as const).map((m) => (
@@ -478,9 +483,7 @@ function ModeToggle({
           type="button"
           onClick={() => onChange(m)}
           title={
-            m === "NET"
-              ? "Введённая сумма — без налога"
-              : "Введённая сумма — включая налог"
+            m === "NET" ? t.invoice.modeNetHint : t.invoice.modeInclHint
           }
           className={`h-full flex-1 rounded-md transition ${
             value === m

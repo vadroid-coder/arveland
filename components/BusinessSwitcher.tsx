@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { switchBusiness } from "@/app/(app)/actions";
+import { useT } from "./I18nProvider";
 
 type Item = { id: string; name: string; invoicePrefix: string; logo: string | null };
 
@@ -14,6 +15,7 @@ export default function BusinessSwitcher({
   businesses: Item[];
   activeId: string | null;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
@@ -41,7 +43,7 @@ export default function BusinessSwitcher({
   if (businesses.length === 0) {
     return (
       <Link href="/businesses/new" className="btn btn-primary h-9">
-        + Добавить компанию
+        {t.business.switcherAdd}
       </Link>
     );
   }
@@ -70,7 +72,7 @@ export default function BusinessSwitcher({
       {open && (
         <div className="absolute left-0 z-50 mt-1.5 w-72 overflow-hidden rounded-xl border border-ink-200 bg-white py-1 shadow-lg">
           <p className="px-3 py-1.5 text-[11px] font-semibold tracking-wide text-ink-400 uppercase">
-            Компании
+            {t.business.switcherTitle}
           </p>
           {businesses.map((b) => (
             <button
@@ -108,14 +110,14 @@ export default function BusinessSwitcher({
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm font-medium text-brand-600 hover:bg-ink-50"
           >
-            + Новая компания
+            {t.business.switcherNew}
           </Link>
           <Link
             href="/businesses"
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm text-ink-600 hover:bg-ink-50"
           >
-            Управление компаниями
+            {t.business.switcherManage}
           </Link>
         </div>
       )}

@@ -5,6 +5,7 @@ import PrintButton from "@/components/PrintButton";
 import StatusBadge from "@/components/StatusBadge";
 import SubmitButton from "@/components/SubmitButton";
 import { effectiveStatus } from "@/lib/invoice";
+import { getT } from "@/lib/ui-language";
 import { deleteInvoice, duplicateInvoice, setInvoiceStatus } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,7 @@ export default async function InvoicePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = await getT();
   const { id } = await params;
   const invoice = await ownedInvoiceOrNotFound(id);
 
@@ -28,7 +30,7 @@ export default async function InvoicePage({
       <div className="no-print flex flex-wrap items-center gap-3">
         <div className="mr-auto">
           <Link href="/" className="text-sm text-ink-500 hover:underline">
-            ← Счета
+            {t.invoice.backToList}
           </Link>
           <div className="mt-1 flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
@@ -40,40 +42,40 @@ export default async function InvoicePage({
 
         {invoice.status !== "PAID" ? (
           <form action={markPaid}>
-            <SubmitButton className="btn btn-ghost">Отметить оплаченным</SubmitButton>
+            <SubmitButton className="btn btn-ghost">{t.invoice.markPaid}</SubmitButton>
           </form>
         ) : (
           <form action={markSent}>
             <SubmitButton className="btn btn-ghost">
-              Снять отметку об оплате
+              {t.invoice.unmarkPaid}
             </SubmitButton>
           </form>
         )}
         {invoice.status === "DRAFT" && (
           <form action={markSent}>
             <SubmitButton className="btn btn-ghost">
-              Отметить отправленным
+              {t.invoice.markSent}
             </SubmitButton>
           </form>
         )}
         {invoice.status === "SENT" && (
           <form action={markDraft}>
-            <SubmitButton className="btn btn-ghost">Вернуть в черновик</SubmitButton>
+            <SubmitButton className="btn btn-ghost">{t.invoice.backToDraft}</SubmitButton>
           </form>
         )}
         <form action={duplicate}>
-          <SubmitButton className="btn btn-ghost">Дублировать</SubmitButton>
+          <SubmitButton className="btn btn-ghost">{t.invoice.duplicate}</SubmitButton>
         </form>
         <form action={remove}>
           <SubmitButton
             className="btn btn-danger"
-            confirm={`Удалить счёт ${invoice.number}?`}
+            confirm={t.invoice.confirmDelete(invoice.number)}
           >
-            Удалить
+            {t.common.delete}
           </SubmitButton>
         </form>
         <Link href={`/invoices/${invoice.id}/edit`} className="btn btn-ghost">
-          Изменить
+          {t.common.edit}
         </Link>
         <PrintButton />
       </div>

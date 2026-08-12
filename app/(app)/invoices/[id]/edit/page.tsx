@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ownedInvoiceOrNotFound } from "@/lib/guard";
 import InvoiceEditor from "@/components/InvoiceEditor";
+import { getT } from "@/lib/ui-language";
 import { addDays, startOfDayUTC, toDateInput } from "@/lib/invoice";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +12,7 @@ export default async function EditInvoicePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = await getT();
   const { id } = await params;
   const invoice = await ownedInvoiceOrNotFound(id);
 
@@ -37,7 +39,7 @@ export default async function EditInvoicePage({
           ← {invoice.number}
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
-          Редактирование счёта
+          {t.invoice.editTitle}
         </h1>
         <p className="text-sm text-ink-500">{invoice.business.name}</p>
       </div>

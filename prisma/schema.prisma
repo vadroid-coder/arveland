@@ -16,6 +16,7 @@ model User {
   name         String?
   passwordHash String
   role         String   @default("USER") // ADMIN | USER
+  uiLanguage   String   @default("RU") // RU | ET | EN — admin panel language
   active       Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

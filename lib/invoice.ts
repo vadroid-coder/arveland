@@ -57,23 +57,12 @@ export function formatDate(date: Date, locale = "ru-RU") {
   });
 }
 
-export const MONTH_NAMES = [
-  "Январь",
-  "Февраль",
-  "Март",
-  "Апрель",
-  "Май",
-  "Июнь",
-  "Июль",
-  "Август",
-  "Сентябрь",
-  "Октябрь",
-  "Ноябрь",
-  "Декабрь",
-];
-
-export function monthLabel(year: number, month: number) {
-  return `${MONTH_NAMES[month - 1] ?? month} ${year}`;
+export function monthLabel(
+  year: number,
+  month: number,
+  months: readonly string[],
+) {
+  return `${months[month - 1] ?? month} ${year}`;
 }
 
 export type InvoiceStatus = "DRAFT" | "SENT" | "PAID";

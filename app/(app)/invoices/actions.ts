@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ownedBusiness, ownedInvoice } from "@/lib/guard";
+import { getT } from "@/lib/ui-language";
 import { computeLine, sumLines, toCents } from "@/lib/money";
 import { buildInvoiceNumber, nextSequence, parseDateInput } from "@/lib/invoice";
 
@@ -43,17 +44,18 @@ function num(value: string, fallback = 0) {
 }
 
 export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> {
+  const t = await getT();
   const business = await ownedBusiness(payload.businessId);
-  if (!business) return { ok: false, error: "Компания не найдена" };
+  if (!business) return { ok: false, error: t.invoice.errBusiness };
 
   if (payload.id && !(await ownedInvoice(payload.id)))
-    return { ok: false, error: "Счёт не найден" };
+    return { ok: false, error: t.invoice.errInvoice };
 
   const rawItems = payload.items.filter(
     (i) => i.description.trim() !== "" || toCents(i.amount) !== 0,
   );
   if (rawItems.length === 0)
-    return { ok: false, error: "Добавьте хотя бы одну строку" };
+    return { ok: false, error: t.invoice.errNoLines };
 
   // --- client -------------------------------------------------------------
   let clientId = payload.clientId;
@@ -69,7 +71,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     const existing = await prisma.client.findFirst({
       where: { id: clientId, businessId: business.id },
     });
-    if (!existing) return { ok: false, error: "Клиент не найден" };
+    if (!existing) return { ok: false, error: t.invoice.errClient };
     snapshot = {
       name: existing.name,
       regNumber: existing.regNumber,
@@ -81,7 +83,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     if (!snapshot.name || !snapshot.regNumber)
       return {
         ok: false,
-        error: "Название клиента и регистрационный код обязательны",
+        error: t.invoice.errClientRequired,
       };
 
     if (payload.saveClient) {
@@ -170,7 +172,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
       const current = await prisma.invoice.findUnique({
         where: { id: payload.id },
       });
-      if (!current) return { ok: false, error: "Счёт не найден" };
+      if (!current) return { ok: false, error: t.invoice.errInvoice };
 
       // A draft moved into another month gets a fresh number for that month.
       let numbering = {};
@@ -222,7 +224,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     return { ok: true, id: invoice.id };
   } catch (err) {
     console.error("[saveInvoice]", err);
-    return { ok: false, error: "Не удалось сохранить. Попробуйте ещё раз." };
+    return { ok: false, error: t.invoice.errSave };
   }
 }
 

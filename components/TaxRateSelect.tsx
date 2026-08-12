@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { formatRate } from "@/lib/money";
+import { useT } from "./I18nProvider";
 
 /**
  * Combobox over the saved tax rates. Typing a rate that does not exist yet
@@ -19,6 +20,7 @@ export default function TaxRateSelect({
   onChange: (value: string) => void;
   onCreate: (rate: number) => void;
 }) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<string | null>(null);
   const box = useRef<HTMLDivElement>(null);
@@ -84,7 +86,7 @@ export default function TaxRateSelect({
         }}
         className="field pr-7 text-right tabular-nums"
         placeholder="0"
-        aria-label="Ставка налога в процентах"
+        aria-label={t.business.taxAria}
       />
       <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-xs text-ink-400">
         %
@@ -95,7 +97,7 @@ export default function TaxRateSelect({
           {visible.length > 0 && (
             <>
               <p className="px-3 py-1 text-[10px] font-semibold tracking-wide text-ink-400 uppercase">
-                Сохранённые ставки
+                {t.business.taxSaved}
               </p>
               {visible.map((r) => (
                 <button
@@ -124,14 +126,14 @@ export default function TaxRateSelect({
                 onClick={create}
                 className="block w-full px-3 py-1.5 text-left text-sm font-medium text-brand-600 hover:bg-brand-50"
               >
-                + Создать ставку {formatRate(parsed)}
+                {t.business.taxCreate(formatRate(parsed))}
               </button>
             </>
           )}
 
           {visible.length === 0 && !isNumber && (
             <p className="px-3 py-2 text-xs text-ink-400">
-              Введите ставку, например 22
+              {t.business.taxEnter}
             </p>
           )}
         </div>

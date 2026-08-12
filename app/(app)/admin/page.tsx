@@ -1,24 +1,10 @@
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth";
+import { getT } from "@/lib/ui-language";
 import SubmitButton from "@/components/SubmitButton";
 import { createUser, deleteUser, updateUser } from "./actions";
 
 export const dynamic = "force-dynamic";
-
-const NOTICES: Record<string, { text: string; tone: string }> = {
-  invalid: {
-    text: "E-mail обязателен, пароль — минимум 6 символов.",
-    tone: "bg-red-50 text-red-700",
-  },
-  duplicate: {
-    text: "Пользователь с таким e-mail уже существует.",
-    tone: "bg-red-50 text-red-700",
-  },
-  self: {
-    text: "Себя удалить нельзя.",
-    tone: "bg-red-50 text-red-700",
-  },
-};
 
 export default async function AdminPage({
   searchParams,
@@ -26,35 +12,39 @@ export default async function AdminPage({
   searchParams: Promise<{ error?: string; created?: string; saved?: string }>;
 }) {
   const admin = await requireAdmin();
+  const t = await getT();
   const { error, created, saved } = await searchParams;
 
   const users = await prisma.user.findMany({
     orderBy: { createdAt: "asc" },
     include: { _count: { select: { businesses: true } } },
   });
-  const notice = error ? NOTICES[error] : null;
+  const notices: Record<string, string> = {
+    invalid: t.admin.errInvalid,
+    duplicate: t.admin.errDuplicate,
+    self: t.admin.errSelf,
+  };
+  const notice = error ? notices[error] : null;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-          Пользователи
+          {t.admin.title}
         </h1>
         <p className="text-sm text-ink-500">
-          Каждый аккаунт полностью отдельный: свои компании, клиенты и счета.
-          Администратор тоже видит только свои данные — права администратора
-          касаются только управления пользователями.
+          {t.admin.subtitle}
         </p>
       </div>
 
       {notice && (
-        <p className={`rounded-lg px-3 py-2 text-sm ${notice.tone}`}>
-          {notice.text}
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+          {notice}
         </p>
       )}
       {(created || saved) && (
         <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-          {created ? "Пользователь создан." : "Изменения сохранены."}
+          {created ? t.admin.userCreated : t.admin.changesSaved}
         </p>
       )}
 
@@ -69,21 +59,21 @@ export default async function AdminPage({
                   <div>
                     <p className="font-medium text-ink-900">{u.email}</p>
                     <p className="text-xs text-ink-400">
-                      Создан {u.createdAt.toLocaleDateString("ru-RU")} ·{" "}
-                      компаний: {u._count.businesses}
-                      {u.id === admin.uid ? " · это вы" : ""}
+                      {t.admin.created(u.createdAt.toLocaleDateString(t.locale))}{" "}
+                      · {t.admin.businessCount(u._count.businesses)}
+                      {u.id === admin.uid ? ` · ${t.admin.itsYou}` : ""}
                     </p>
                   </div>
                   {!u.active && (
                     <span className="badge bg-ink-100 text-ink-500">
-                      Деактивирован
+                      {t.admin.deactivated}
                     </span>
                   )}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="label">Имя</label>
+                    <label className="label">{t.common.name}</label>
                     <input
                       name="name"
                       className="field"
@@ -91,19 +81,19 @@ export default async function AdminPage({
                     />
                   </div>
                   <div>
-                    <label className="label">Роль</label>
+                    <label className="label">{t.common.role}</label>
                     <select name="role" className="field" defaultValue={u.role}>
-                      <option value="USER">Пользователь</option>
-                      <option value="ADMIN">Администратор</option>
+                      <option value="USER">{t.nav.user}</option>
+                      <option value="ADMIN">{t.nav.admin}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="label">Новый пароль</label>
+                    <label className="label">{t.admin.newPassword}</label>
                     <input
                       name="password"
                       type="password"
                       className="field"
-                      placeholder="Оставьте пустым"
+                      placeholder={t.admin.leaveEmpty}
                       minLength={6}
                     />
                   </div>
@@ -117,18 +107,18 @@ export default async function AdminPage({
                       defaultChecked={u.active}
                       className="h-4 w-4 rounded border-ink-300"
                     />
-                    Активен
+                    {t.admin.activeLabel}
                   </label>
                   <SubmitButton className="btn btn-primary ml-auto">
-                    Сохранить
+                    {t.common.save}
                   </SubmitButton>
                   {u.id !== admin.uid && (
                     <SubmitButton
                       className="btn btn-danger"
                       formAction={remove}
-                      confirm={`Удалить пользователя ${u.email}? Вместе с ним будут удалены его компании (${u._count.businesses}), клиенты и счета. Это необратимо.`}
+                      confirm={t.admin.confirmDelete(u.email, u._count.businesses)}
                     >
-                      Удалить
+                      {t.common.delete}
                     </SubmitButton>
                   )}
                 </div>
@@ -138,17 +128,17 @@ export default async function AdminPage({
         </div>
 
         <form action={createUser} className="card h-fit space-y-4 p-5">
-          <h2 className="text-sm font-semibold text-ink-700">Новый пользователь</h2>
+          <h2 className="text-sm font-semibold text-ink-700">{t.admin.newUser}</h2>
           <div>
-            <label className="label">Имя</label>
+            <label className="label">{t.common.name}</label>
             <input name="name" className="field" />
           </div>
           <div>
-            <label className="label">E-mail *</label>
+            <label className="label">{t.common.email} *</label>
             <input name="email" type="email" className="field" required />
           </div>
           <div>
-            <label className="label">Пароль * (минимум 6)</label>
+            <label className="label">{t.admin.passwordMin}</label>
             <input
               name="password"
               type="password"
@@ -158,14 +148,14 @@ export default async function AdminPage({
             />
           </div>
           <div>
-            <label className="label">Роль</label>
+            <label className="label">{t.common.role}</label>
             <select name="role" className="field" defaultValue="USER">
-              <option value="USER">Пользователь</option>
-              <option value="ADMIN">Администратор</option>
+              <option value="USER">{t.nav.user}</option>
+              <option value="ADMIN">{t.nav.admin}</option>
             </select>
           </div>
           <SubmitButton className="btn btn-primary w-full">
-            Создать пользователя
+            {t.admin.createUser}
           </SubmitButton>
         </form>
       </div>

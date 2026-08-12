@@ -4,6 +4,7 @@ import ClientFields from "@/components/ClientFields";
 import SubmitButton from "@/components/SubmitButton";
 import { formatMoney } from "@/lib/money";
 import { formatDate } from "@/lib/invoice";
+import { getT } from "@/lib/ui-language";
 import { deleteClient, updateClient } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,7 @@ export default async function EditClientPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ error?: string }>;
 }) {
+  const t = await getT();
   const { id } = await params;
   const { error } = await searchParams;
 
@@ -27,7 +29,7 @@ export default async function EditClientPage({
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <Link href="/clients" className="text-sm text-ink-500 hover:underline">
-          ← Клиенты
+          {t.client.back}
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
           {client.name}
@@ -36,28 +38,28 @@ export default async function EditClientPage({
 
       {error === "duplicate" && (
         <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          Клиент с таким регистрационным кодом уже есть — открыл существующего.
+          {t.client.duplicateError}
         </p>
       )}
 
       <form action={update} className="card space-y-5 p-5">
         <ClientFields client={client} />
         <div className="flex items-center gap-3">
-          <SubmitButton className="btn btn-primary" pendingLabel="Сохраняю…">
-            Сохранить
+          <SubmitButton className="btn btn-primary" pendingLabel={t.common.saving}>
+            {t.common.save}
           </SubmitButton>
           <Link href="/clients" className="btn btn-ghost">
-            Отмена
+            {t.common.cancel}
           </Link>
         </div>
       </form>
 
       <section className="card overflow-hidden">
         <h2 className="border-b border-ink-100 px-5 py-3 text-sm font-semibold text-ink-700">
-          Последние счета
+          {t.client.recentInvoices}
         </h2>
         {client.invoices.length === 0 ? (
-          <p className="p-6 text-sm text-ink-400">Счетов нет.</p>
+          <p className="p-6 text-sm text-ink-400">{t.client.noInvoices}</p>
         ) : (
           <ul className="divide-y divide-ink-50">
             {client.invoices.map((inv) => (
@@ -69,10 +71,10 @@ export default async function EditClientPage({
                   {inv.number}
                 </Link>
                 <span className="text-sm text-ink-500">
-                  {formatDate(inv.issueDate)}
+                  {formatDate(inv.issueDate, t.locale)}
                 </span>
                 <span className="ml-auto text-sm font-medium tabular-nums">
-                  {formatMoney(inv.total, inv.currency)}
+                  {formatMoney(inv.total, inv.currency, t.locale)}
                 </span>
               </li>
             ))}
@@ -84,9 +86,9 @@ export default async function EditClientPage({
         <form action={remove}>
           <SubmitButton
             className="btn btn-danger"
-            confirm={`Удалить клиента «${client.name}»? Счета останутся.`}
+            confirm={t.client.confirmDelete(client.name)}
           >
-            Удалить клиента
+            {t.client.deleteClient}
           </SubmitButton>
         </form>
       </section>

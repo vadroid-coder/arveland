@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useT } from "./I18nProvider";
 
 export type ClientOption = {
   id: string;
@@ -44,6 +45,7 @@ export default function ClientPicker({
   onDraft: (patch: Partial<ClientDraft>) => void;
   onSaveClient: (value: boolean) => void;
 }) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [manual, setManual] = useState(false);
@@ -90,9 +92,13 @@ export default function ClientPicker({
         <div className="flex items-start justify-between gap-3">
           <div className="text-sm">
             <p className="font-semibold text-ink-900">{selected.name}</p>
-            <p className="text-ink-500">Рег. код {selected.regNumber}</p>
+            <p className="text-ink-500">
+              {t.client.colReg} {selected.regNumber}
+            </p>
             {selected.vatNumber && (
-              <p className="text-ink-500">НДС {selected.vatNumber}</p>
+              <p className="text-ink-500">
+                {t.client.colVat} {selected.vatNumber}
+              </p>
             )}
             {selected.address && (
               <p className="whitespace-pre-line text-ink-500">
@@ -110,7 +116,7 @@ export default function ClientPicker({
               setQuery("");
             }}
           >
-            Сменить
+            {t.client.pickerSwitch}
           </button>
         </div>
       </div>
@@ -121,7 +127,7 @@ export default function ClientPicker({
     return (
       <div className="space-y-4 rounded-lg border border-brand-200 bg-brand-50/40 p-4">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-ink-800">Новый клиент</p>
+          <p className="text-sm font-semibold text-ink-800">{t.client.pickerNew}</p>
           <button
             type="button"
             className="text-xs text-brand-600 hover:underline"
@@ -130,13 +136,13 @@ export default function ClientPicker({
               onDraft(emptyDraft);
             }}
           >
-            ← Выбрать существующего
+            {t.client.pickerChooseExisting}
           </button>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="label">Название компании *</label>
+            <label className="label">{t.common.companyName} *</label>
             <input
               className="field"
               value={draft.name}
@@ -145,7 +151,7 @@ export default function ClientPicker({
             />
           </div>
           <div>
-            <label className="label">Регистрационный код *</label>
+            <label className="label">{t.common.regNumber} *</label>
             <input
               className="field"
               value={draft.regNumber}
@@ -154,7 +160,7 @@ export default function ClientPicker({
             />
           </div>
           <div>
-            <label className="label">Номер НДС</label>
+            <label className="label">{t.common.vatNumber}</label>
             <input
               className="field"
               value={draft.vatNumber}
@@ -162,7 +168,7 @@ export default function ClientPicker({
             />
           </div>
           <div>
-            <label className="label">E-mail</label>
+            <label className="label">{t.common.email}</label>
             <input
               type="email"
               className="field"
@@ -171,7 +177,7 @@ export default function ClientPicker({
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="label">Адрес</label>
+            <label className="label">{t.common.address}</label>
             <textarea
               rows={2}
               className="field"
@@ -188,7 +194,7 @@ export default function ClientPicker({
             onChange={(e) => onSaveClient(e.target.checked)}
             className="h-4 w-4 rounded border-ink-300"
           />
-          Сохранить клиента в справочник
+          {t.client.pickerSave}
         </label>
       </div>
     );
@@ -198,7 +204,7 @@ export default function ClientPicker({
     <div className="relative" ref={box}>
       <input
         className="field"
-        placeholder="Поиск по названию или регистрационному коду…"
+        placeholder={t.client.pickerPlaceholder}
         value={query}
         onFocus={() => setOpen(true)}
         onChange={(e) => {
@@ -223,15 +229,15 @@ export default function ClientPicker({
             >
               <span className="block font-medium text-ink-800">{c.name}</span>
               <span className="block text-xs text-ink-400">
-                Рег. {c.regNumber}
-                {c.vatNumber ? ` · НДС ${c.vatNumber}` : ""}
+                {t.client.colReg} {c.regNumber}
+                {c.vatNumber ? ` · ${t.client.colVat} ${c.vatNumber}` : ""}
               </span>
             </button>
           ))}
 
           {matches.length === 0 && (
             <p className="px-3 py-2 text-sm text-ink-400">
-              Клиент не найден
+              {t.client.pickerNotFound}
             </p>
           )}
 
@@ -242,7 +248,7 @@ export default function ClientPicker({
             onClick={startManual}
             className="block w-full px-3 py-2 text-left text-sm font-medium text-brand-600 hover:bg-brand-50"
           >
-            + Ввести нового клиента{query.trim() ? `: «${query.trim()}»` : ""}
+            {t.client.pickerCreate(query.trim())}
           </button>
         </div>
       )}

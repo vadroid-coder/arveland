@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getT } from "@/lib/ui-language";
 import { ownedBusinessOrNotFound } from "@/lib/guard";
 import BusinessForm from "@/components/BusinessForm";
 import SubmitButton from "@/components/SubmitButton";
@@ -18,6 +19,7 @@ export default async function EditBusinessPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = await getT();
   const { id } = await params;
   await ownedBusinessOrNotFound(id);
   const business = await prisma.business.findUniqueOrThrow({
@@ -33,7 +35,7 @@ export default async function EditBusinessPage({
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <Link href="/businesses" className="text-sm text-ink-500 hover:underline">
-          ← Компании
+          {t.business.back}
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
           {business.name}
@@ -43,33 +45,36 @@ export default async function EditBusinessPage({
       <BusinessForm
         action={update}
         business={business}
-        submitLabel="Сохранить изменения"
+        submitLabel={t.common.saveChanges}
       />
 
       <section className="card p-5">
-        <h2 className="mb-1 text-sm font-semibold text-ink-700">Ставки налога</h2>
+        <h2 className="mb-1 text-sm font-semibold text-ink-700">
+          {t.business.taxTitle}
+        </h2>
         <p className="mb-4 text-xs text-ink-400">
-          Появляются в выпадающем списке в строке счёта. Новую ставку можно
-          добавить и прямо при создании счёта.
+          {t.business.taxHint}
         </p>
 
         <div className="mb-4 flex flex-wrap gap-2">
           {business.taxRates.length === 0 && (
-            <p className="text-sm text-ink-400">Ставки ещё не добавлены.</p>
+            <p className="text-sm text-ink-400">{t.business.taxEmpty}</p>
           )}
-          {business.taxRates.map((t) => (
+          {business.taxRates.map((taxRate) => (
             <span
-              key={t.id}
+              key={taxRate.id}
               className="inline-flex items-center gap-2 rounded-lg border border-ink-200 bg-ink-50 py-1 pr-1 pl-3 text-sm"
             >
               <span className="font-medium text-ink-800">
-                {formatRate(t.rate)}
+                {formatRate(taxRate.rate)}
               </span>
-              {t.label && <span className="text-ink-400">{t.label}</span>}
-              <form action={deleteTaxRate.bind(null, t.id, business.id)}>
+              {taxRate.label && (
+                <span className="text-ink-400">{taxRate.label}</span>
+              )}
+              <form action={deleteTaxRate.bind(null, taxRate.id, business.id)}>
                 <button
                   className="grid h-6 w-6 place-items-center rounded text-ink-400 transition hover:bg-red-50 hover:text-red-600"
-                  title="Удалить"
+                  title={t.common.delete}
                 >
                   ×
                 </button>
@@ -80,7 +85,7 @@ export default async function EditBusinessPage({
 
         <form action={addRate} className="flex flex-wrap items-end gap-3">
           <div className="w-32">
-            <label className="label">Ставка %</label>
+            <label className="label">{t.business.taxRate}</label>
             <input
               name="rate"
               className="field"
@@ -90,24 +95,24 @@ export default async function EditBusinessPage({
             />
           </div>
           <div className="w-48">
-            <label className="label">Название (необязательно)</label>
-            <input name="label" className="field" placeholder="Стандартная ставка" />
+            <label className="label">{t.business.taxLabel}</label>
+            <input name="label" className="field" placeholder={t.business.taxLabelPlaceholder} />
           </div>
-          <SubmitButton className="btn btn-ghost">Добавить ставку</SubmitButton>
+          <SubmitButton className="btn btn-ghost">{t.business.taxAdd}</SubmitButton>
         </form>
       </section>
 
       <section className="card border-red-200 p-5">
-        <h2 className="text-sm font-semibold text-red-700">Опасная зона</h2>
+        <h2 className="text-sm font-semibold text-red-700">{t.business.dangerZone}</h2>
         <p className="mt-1 mb-4 text-xs text-ink-500">
-          Архивирование убирает компанию из переключателя. Счета остаются.
+          {t.business.archiveHint}
         </p>
         <form action={archive}>
           <SubmitButton
             className="btn btn-danger"
-            confirm={`Архивировать «${business.name}»?`}
+            confirm={t.business.confirmArchive(business.name)}
           >
-            Архивировать компанию
+            {t.business.archive}
           </SubmitButton>
         </form>
       </section>

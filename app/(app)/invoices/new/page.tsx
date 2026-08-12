@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getActiveBusiness } from "@/lib/business";
 import InvoiceEditor from "@/components/InvoiceEditor";
 import EmptyBusiness from "@/components/EmptyBusiness";
+import { getT } from "@/lib/ui-language";
 import {
   addDays,
   buildInvoiceNumber,
@@ -16,6 +17,8 @@ export const dynamic = "force-dynamic";
 export default async function NewInvoicePage() {
   const { active } = await getActiveBusiness();
   if (!active) return <EmptyBusiness />;
+
+  const t = await getT();
 
   const [clients, taxRates] = await Promise.all([
     prisma.client.findMany({
@@ -39,10 +42,10 @@ export default async function NewInvoicePage() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
         <Link href="/" className="text-sm text-ink-500 hover:underline">
-          ← Счета
+          {t.invoice.backToList}
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
-          Новый счёт
+          {t.invoice.newTitle}
         </h1>
         <p className="text-sm text-ink-500">{active.name}</p>
       </div>

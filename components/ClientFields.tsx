@@ -1,3 +1,7 @@
+"use client";
+
+import { useT } from "./I18nProvider";
+
 type ClientLike = {
   name?: string;
   regNumber?: string;
@@ -8,15 +12,16 @@ type ClientLike = {
 };
 
 export default function ClientFields({ client }: { client?: ClientLike }) {
+  const t = useT();
   const c = client ?? {};
   return (
     <div className="@container grid gap-4 @md:grid-cols-2">
       <div>
-        <label className="label">Название компании *</label>
+        <label className="label">{t.common.companyName} *</label>
         <input name="name" className="field" defaultValue={c.name ?? ""} required />
       </div>
       <div>
-        <label className="label">Регистрационный код *</label>
+        <label className="label">{t.common.regNumber} *</label>
         <input
           name="regNumber"
           className="field"
@@ -25,7 +30,7 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
         />
       </div>
       <div>
-        <label className="label">Номер НДС (KMKR / VAT)</label>
+        <label className="label">{t.common.vatNumber}</label>
         <input
           name="vatNumber"
           className="field"
@@ -33,7 +38,7 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
         />
       </div>
       <div>
-        <label className="label">E-mail</label>
+        <label className="label">{t.common.email}</label>
         <input
           name="email"
           type="email"
@@ -42,11 +47,11 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
         />
       </div>
       <div>
-        <label className="label">Телефон</label>
+        <label className="label">{t.common.phone}</label>
         <input name="phone" className="field" defaultValue={c.phone ?? ""} />
       </div>
       <div className="@md:col-span-2">
-        <label className="label">Адрес</label>
+        <label className="label">{t.common.address}</label>
         <textarea
           name="address"
           rows={2}

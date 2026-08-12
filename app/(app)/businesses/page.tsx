@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getT } from "@/lib/ui-language";
 import { getActiveBusiness } from "@/lib/business";
 
 export const dynamic = "force-dynamic";
 
 export default async function BusinessesPage() {
+  const t = await getT();
   const { businesses, active, user } = await getActiveBusiness();
   const counts = await prisma.invoice.groupBy({
     by: ["businessId"],
@@ -19,20 +21,20 @@ export default async function BusinessesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-            Компании
+            {t.business.title}
           </h1>
           <p className="text-sm text-ink-500">
-            Каждая компания — отдельная серия счетов и отдельный пункт в переключателе.
+            {t.business.subtitle}
           </p>
         </div>
         <Link href="/businesses/new" className="btn btn-primary">
-          + Новая компания
+          {t.business.new}
         </Link>
       </div>
 
       {businesses.length === 0 ? (
         <div className="card p-12 text-center text-sm text-ink-500">
-          Ни одной компании ещё не добавлено.
+          {t.business.empty}
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -59,19 +61,19 @@ export default async function BusinessesPage() {
                 </div>
                 {b.id === active?.id && (
                   <span className="badge bg-brand-50 text-brand-700">
-                    Активна
+                    {t.business.active}
                   </span>
                 )}
               </div>
               <div>
                 <p className="font-medium text-ink-900">{b.name}</p>
                 <p className="text-xs text-ink-400">
-                  {b.regNumber ? `Рег. ${b.regNumber} · ` : ""}
+                  {b.regNumber ? `${t.client.colReg} ${b.regNumber} · ` : ""}
                   {b.invoicePrefix}
                 </p>
               </div>
               <p className="mt-auto text-xs text-ink-500">
-                счетов: {countFor(b.id)} · срок оплаты {b.paymentTermDays} дн. ·{" "}
+                {t.business.stats(countFor(b.id), b.paymentTermDays)} ·{" "}
                 {b.currency}
               </p>
             </Link>

@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import LogoUpload from "./LogoUpload";
 import { DOC_LANGUAGES } from "@/lib/doc-language";
+import { useT } from "./I18nProvider";
 import SubmitButton from "./SubmitButton";
 
 type BusinessLike = {
@@ -31,16 +34,17 @@ export default function BusinessForm({
   business?: BusinessLike;
   submitLabel: string;
 }) {
+  const t = useT();
   const b = business ?? {};
 
   return (
     <form action={action} className="space-y-5">
       <section className="card p-5">
         <h2 className="mb-4 text-sm font-semibold text-ink-700">
-          Реквизиты компании
+          {t.business.detailsSection}
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Название компании *" className="sm:col-span-2">
+          <Field label={`${t.common.companyName} *`} className="sm:col-span-2">
             <input
               name="name"
               className="field"
@@ -48,21 +52,21 @@ export default function BusinessForm({
               required
             />
           </Field>
-          <Field label="Регистрационный код">
+          <Field label={t.common.regNumber}>
             <input
               name="regNumber"
               className="field"
               defaultValue={b.regNumber ?? ""}
             />
           </Field>
-          <Field label="Номер НДС (KMKR / VAT)">
+          <Field label={t.common.vatNumber}>
             <input
               name="vatNumber"
               className="field"
               defaultValue={b.vatNumber ?? ""}
             />
           </Field>
-          <Field label="Адрес" className="sm:col-span-2">
+          <Field label={t.common.address} className="sm:col-span-2">
             <textarea
               name="address"
               rows={2}
@@ -70,7 +74,7 @@ export default function BusinessForm({
               defaultValue={b.address ?? ""}
             />
           </Field>
-          <Field label="E-mail">
+          <Field label={t.common.email}>
             <input
               name="email"
               type="email"
@@ -78,10 +82,10 @@ export default function BusinessForm({
               defaultValue={b.email ?? ""}
             />
           </Field>
-          <Field label="Телефон">
+          <Field label={t.common.phone}>
             <input name="phone" className="field" defaultValue={b.phone ?? ""} />
           </Field>
-          <Field label="Сайт" className="sm:col-span-2">
+          <Field label={t.common.website} className="sm:col-span-2">
             <input
               name="website"
               className="field"
@@ -96,10 +100,10 @@ export default function BusinessForm({
 
       <section className="card p-5">
         <h2 className="mb-4 text-sm font-semibold text-ink-700">
-          Настройки счетов
+          {t.business.invoiceSection}
         </h2>
         <div className="grid gap-4 sm:grid-cols-4">
-          <Field label="Префикс номера *">
+          <Field label={`${t.business.prefix} *`}>
             <input
               name="invoicePrefix"
               className="field uppercase"
@@ -108,10 +112,10 @@ export default function BusinessForm({
               required
             />
             <p className="mt-1 text-xs text-ink-400">
-              Формат: PREFIX-YY-M-NR
+              {t.business.prefixHint}
             </p>
           </Field>
-          <Field label="Срок оплаты (дней)">
+          <Field label={t.business.paymentTerm}>
             <input
               name="paymentTermDays"
               type="number"
@@ -120,7 +124,7 @@ export default function BusinessForm({
               defaultValue={b.paymentTermDays ?? 7}
             />
           </Field>
-          <Field label="Валюта">
+          <Field label={t.business.currency}>
             <select
               name="currency"
               className="field"
@@ -131,7 +135,7 @@ export default function BusinessForm({
               ))}
             </select>
           </Field>
-          <Field label="Язык счетов">
+          <Field label={t.business.docLanguage}>
             <select
               name="defaultLanguage"
               className="field"
@@ -144,7 +148,7 @@ export default function BusinessForm({
               ))}
             </select>
             <p className="mt-1 text-xs text-ink-400">
-              Подставляется в новый счёт
+              {t.business.docLanguageHint}
             </p>
           </Field>
         </div>
@@ -152,13 +156,13 @@ export default function BusinessForm({
 
       <section className="card p-5">
         <h2 className="mb-1 text-sm font-semibold text-ink-700">
-          Банковские реквизиты
+          {t.business.bankSection}
         </h2>
         <p className="mb-4 text-xs text-ink-400">
-          Печатаются на счёте отдельным выделенным блоком — куда переводить деньги.
+          {t.business.bankHint}
         </p>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Название банка">
+          <Field label={t.business.bankName}>
             <input
               name="bankName"
               className="field"
@@ -166,7 +170,7 @@ export default function BusinessForm({
               placeholder="LHV Pank"
             />
           </Field>
-          <Field label="Расчётный счёт (IBAN)">
+          <Field label={t.business.bankAccount}>
             <input
               name="bankAccount"
               className="field"
@@ -174,31 +178,31 @@ export default function BusinessForm({
               placeholder="EE00 0000 0000 0000 0000"
             />
           </Field>
-          <Field label="SWIFT / BIC">
+          <Field label={t.business.bankSwift}>
             <input
               name="bankSwift"
               className="field"
               defaultValue={b.bankSwift ?? ""}
             />
           </Field>
-          <Field label="Примечание в подвале счёта" className="sm:col-span-3">
+          <Field label={t.business.footerNote} className="sm:col-span-3">
             <textarea
               name="footerNote"
               rows={2}
               className="field"
               defaultValue={b.footerNote ?? ""}
-              placeholder="Пеня 0,05% в день."
+              placeholder={t.business.footerPlaceholder}
             />
           </Field>
         </div>
       </section>
 
       <div className="flex items-center gap-3">
-        <SubmitButton className="btn btn-primary" pendingLabel="Сохраняю…">
+        <SubmitButton className="btn btn-primary" pendingLabel={t.common.saving}>
           {submitLabel}
         </SubmitButton>
         <Link href="/businesses" className="btn btn-ghost">
-          Отмена
+          {t.common.cancel}
         </Link>
       </div>
     </form>

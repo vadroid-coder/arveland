@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword, startSession } from "@/lib/auth";
 import Logo from "@/components/Logo";
 import SubmitButton from "@/components/SubmitButton";
+import { getT } from "@/lib/ui-language";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,7 @@ export default async function SetupPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   if ((await prisma.user.count()) > 0) redirect("/login");
+  const t = await getT();
   const { error } = await searchParams;
 
   return (
@@ -48,19 +50,19 @@ export default async function SetupPage({
           <Logo className="h-11 w-11" />
           <div className="text-center">
             <h1 className="text-xl font-semibold text-ink-900">
-              Первичная настройка
+              {t.auth.setupTitle}
             </h1>
-            <p className="text-sm text-ink-500">Создайте аккаунт администратора</p>
+            <p className="text-sm text-ink-500">{t.auth.setupSubtitle}</p>
           </div>
         </div>
 
         <form action={createFirstAdmin} className="card space-y-4 p-6">
           <div>
-            <label className="label">Имя</label>
+            <label className="label">{t.common.name}</label>
             <input name="name" className="field" placeholder="Administrator" />
           </div>
           <div>
-            <label className="label">E-mail</label>
+            <label className="label">{t.common.email}</label>
             <input
               name="email"
               type="email"
@@ -70,7 +72,7 @@ export default async function SetupPage({
             />
           </div>
           <div>
-            <label className="label">Пароль (минимум 6 символов)</label>
+            <label className="label">{t.auth.setupPassword}</label>
             <input
               name="password"
               type="password"
@@ -81,11 +83,11 @@ export default async function SetupPage({
           </div>
           {error ? (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-              Проверьте данные и попробуйте ещё раз.
+              {t.auth.setupError}
             </p>
           ) : null}
           <SubmitButton className="btn btn-primary w-full py-2.5">
-            Создать аккаунт
+            {t.auth.setupSubmit}
           </SubmitButton>
         </form>
       </div>

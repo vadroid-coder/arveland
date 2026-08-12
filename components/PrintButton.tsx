@@ -1,15 +1,16 @@
 "use client";
 
+import { useT } from "./I18nProvider";
+
 export default function PrintButton({
   className = "btn btn-primary",
-  children = "Печать / PDF",
 }: {
   className?: string;
-  children?: React.ReactNode;
 }) {
+  const t = useT();
   return (
     <button type="button" className={className} onClick={() => window.print()}>
-      {children}
+      {t.invoice.print}
     </button>
   );
 }

@@ -4,6 +4,7 @@ import { getActiveBusiness } from "@/lib/business";
 import ClientFields from "@/components/ClientFields";
 import SubmitButton from "@/components/SubmitButton";
 import EmptyBusiness from "@/components/EmptyBusiness";
+import { getT } from "@/lib/ui-language";
 import { createClient } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -15,6 +16,8 @@ export default async function ClientsPage({
 }) {
   const { active } = await getActiveBusiness();
   if (!active) return <EmptyBusiness />;
+
+  const t = await getT();
 
   const { q = "", error } = await searchParams;
   const search = q.trim();
@@ -41,7 +44,7 @@ export default async function ClientsPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-          Клиенты
+          {t.client.title}
         </h1>
         <p className="text-sm text-ink-500">{active.name}</p>
       </div>
@@ -50,25 +53,25 @@ export default async function ClientsPage({
         <div className="space-y-4">
           <form className="card flex items-end gap-3 p-3">
             <div className="flex-1">
-              <label className="label">Поиск по названию или рег. коду</label>
+              <label className="label">{t.client.searchLabel}</label>
               <input name="q" defaultValue={search} className="field" />
             </div>
-            <button className="btn btn-ghost">Найти</button>
+            <button className="btn btn-ghost">{t.common.find}</button>
           </form>
 
           <div className="card overflow-hidden">
             {clients.length === 0 ? (
               <p className="p-10 text-center text-sm text-ink-500">
-                Клиенты не найдены.
+                {t.client.empty}
               </p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-left text-xs tracking-wide text-ink-400 uppercase">
-                    <th className="px-4 py-2 font-medium">Название</th>
-                    <th className="px-4 py-2 font-medium">Рег. код</th>
-                    <th className="px-4 py-2 font-medium">НДС</th>
-                    <th className="px-4 py-2 text-right font-medium">Счетов</th>
+                    <th className="px-4 py-2 font-medium">{t.client.colName}</th>
+                    <th className="px-4 py-2 font-medium">{t.client.colReg}</th>
+                    <th className="px-4 py-2 font-medium">{t.client.colVat}</th>
+                    <th className="px-4 py-2 text-right font-medium">{t.client.colInvoices}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,15 +109,15 @@ export default async function ClientsPage({
         </div>
 
         <form action={create} className="card h-fit space-y-4 p-5">
-          <h2 className="text-sm font-semibold text-ink-700">Новый клиент</h2>
+          <h2 className="text-sm font-semibold text-ink-700">{t.client.newTitle}</h2>
           {error === "required" && (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
-              Название и регистрационный код обязательны.
+              {t.client.requiredError}
             </p>
           )}
           <ClientFields />
           <SubmitButton className="btn btn-primary w-full">
-            Добавить клиента
+            {t.client.add}
           </SubmitButton>
         </form>
       </div>

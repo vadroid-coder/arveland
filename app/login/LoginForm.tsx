@@ -1,9 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
+import { useT } from "@/components/I18nProvider";
 import { loginAction, type LoginState } from "./actions";
 
 export default function LoginForm({ next }: { next: string }) {
+  const t = useT();
   const [state, formAction, pending] = useActionState<LoginState, FormData>(
     loginAction,
     {},
@@ -14,7 +16,7 @@ export default function LoginForm({ next }: { next: string }) {
       <input type="hidden" name="next" value={next} />
       <div>
         <label className="label" htmlFor="email">
-          E-mail
+          {t.common.email}
         </label>
         <input
           id="email"
@@ -29,7 +31,7 @@ export default function LoginForm({ next }: { next: string }) {
       </div>
       <div>
         <label className="label" htmlFor="password">
-          Пароль
+          {t.common.password}
         </label>
         <input
           id="password"
@@ -49,7 +51,7 @@ export default function LoginForm({ next }: { next: string }) {
       ) : null}
 
       <button className="btn btn-primary w-full py-2.5" disabled={pending}>
-        {pending ? "Вхожу…" : "Войти"}
+        {pending ? t.auth.signingIn : t.auth.signIn}
       </button>
     </form>
   );

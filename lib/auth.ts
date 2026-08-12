@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
+import { asUiLanguage } from "./i18n";
+import { UI_LANGUAGE_COOKIE, uiLanguageCookieOptions } from "./ui-language";
 import {
   SESSION_COOKIE,
   signSession,
@@ -33,6 +35,7 @@ export async function startSession(user: {
   email: string;
   name: string | null;
   role: string;
+  uiLanguage?: string;
 }) {
   const token = await signSession({
     uid: user.id,
@@ -42,6 +45,15 @@ export async function startSession(user: {
   });
   const jar = await cookies();
   jar.set(SESSION_COOKIE, token, sessionCookieOptions);
+
+  // The panel language is read from a cookie on every render, including on the
+  // sign-in screen, so signing in restores the account's own preference.
+  if (user.uiLanguage)
+    jar.set(
+      UI_LANGUAGE_COOKIE,
+      asUiLanguage(user.uiLanguage),
+      uiLanguageCookieOptions,
+    );
 }
 
 export async function endSession() {
