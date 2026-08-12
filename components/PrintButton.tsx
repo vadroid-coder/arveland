@@ -2,7 +2,7 @@
 
 export default function PrintButton({
   className = "btn btn-primary",
-  children = "Prindi / PDF",
+  children = "Печать / PDF",
 }: {
   className?: string;
   children?: React.ReactNode;

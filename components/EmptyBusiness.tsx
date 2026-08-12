@@ -4,14 +4,14 @@ export default function EmptyBusiness() {
   return (
     <div className="card mx-auto max-w-lg p-12 text-center">
       <h2 className="text-lg font-semibold text-ink-900">
-        Ühtegi ettevõtet pole veel loodud
+        Ни одной компании ещё не создано
       </h2>
       <p className="mt-2 text-sm text-ink-500">
-        Lisa esimene ettevõte — selle andmed lähevad arve päisesse ja ettevõtted
-        ilmuvad päises lülitina.
+        Добавьте первую компанию — её реквизиты попадут в шапку счёта, а сами
+        компании появятся переключателем в верхней панели.
       </p>
       <Link href="/businesses/new" className="btn btn-primary mt-6">
-        + Lisa ettevõte
+        + Добавить компанию
       </Link>
     </div>
   );

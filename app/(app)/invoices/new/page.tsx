@@ -39,10 +39,10 @@ export default async function NewInvoicePage() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
         <Link href="/" className="text-sm text-ink-500 hover:underline">
-          ← Arved
+          ← Счета
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
-          Uus arve
+          Новый счёт
         </h1>
         <p className="text-sm text-ink-500">{active.name}</p>
       </div>
@@ -54,6 +54,7 @@ export default async function NewInvoicePage() {
           currency: active.currency,
           paymentTermDays: active.paymentTermDays,
           invoicePrefix: active.invoicePrefix,
+          defaultLanguage: active.defaultLanguage,
         }}
         clients={clients.map((c) => ({
           id: c.id,

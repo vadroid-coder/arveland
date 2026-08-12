@@ -14,7 +14,7 @@ export default function LoginForm({ next }: { next: string }) {
       <input type="hidden" name="next" value={next} />
       <div>
         <label className="label" htmlFor="email">
-          E-post
+          E-mail
         </label>
         <input
           id="email"
@@ -29,7 +29,7 @@ export default function LoginForm({ next }: { next: string }) {
       </div>
       <div>
         <label className="label" htmlFor="password">
-          Parool
+          Пароль
         </label>
         <input
           id="password"
@@ -49,7 +49,7 @@ export default function LoginForm({ next }: { next: string }) {
       ) : null}
 
       <button className="btn btn-primary w-full py-2.5" disabled={pending}>
-        {pending ? "Sisenen…" : "Logi sisse"}
+        {pending ? "Вхожу…" : "Войти"}
       </button>
     </form>
   );

@@ -27,6 +27,7 @@ function readBusiness(fd: FormData) {
       (str(fd, "invoicePrefix") ?? "INV").toUpperCase().replace(/\s+/g, ""),
     paymentTermDays: Math.max(0, Number(fd.get("paymentTermDays") ?? 7) || 0),
     currency: (str(fd, "currency") ?? "EUR").toUpperCase(),
+    defaultLanguage: fd.get("defaultLanguage") === "EN" ? "EN" : "ET",
     bankName: str(fd, "bankName"),
     bankAccount: str(fd, "bankAccount"),
     bankSwift: str(fd, "bankSwift"),

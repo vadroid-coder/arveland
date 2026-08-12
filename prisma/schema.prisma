@@ -42,6 +42,7 @@ model Business {
   invoicePrefix   String   @default("INV")
   paymentTermDays Int      @default(7)
   currency        String   @default("EUR")
+  defaultLanguage String   @default("ET") // ET | EN — preselected on new invoices
   bankName        String?
   bankAccount     String?
   bankSwift       String?
@@ -115,6 +116,7 @@ model Invoice {
   paidAt    DateTime?
 
   currency String @default("EUR")
+  language String @default("ET") // ET | EN — language of the printed document
   notes    String?
 
   subtotal Int @default(0) // net, in cents

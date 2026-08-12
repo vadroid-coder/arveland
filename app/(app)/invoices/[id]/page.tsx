@@ -28,7 +28,7 @@ export default async function InvoicePage({
       <div className="no-print flex flex-wrap items-center gap-3">
         <div className="mr-auto">
           <Link href="/" className="text-sm text-ink-500 hover:underline">
-            ← Arved
+            ← Счета
           </Link>
           <div className="mt-1 flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
@@ -40,40 +40,40 @@ export default async function InvoicePage({
 
         {invoice.status !== "PAID" ? (
           <form action={markPaid}>
-            <SubmitButton className="btn btn-ghost">Märgi makstuks</SubmitButton>
+            <SubmitButton className="btn btn-ghost">Отметить оплаченным</SubmitButton>
           </form>
         ) : (
           <form action={markSent}>
             <SubmitButton className="btn btn-ghost">
-              Tühista makse märge
+              Снять отметку об оплате
             </SubmitButton>
           </form>
         )}
         {invoice.status === "DRAFT" && (
           <form action={markSent}>
             <SubmitButton className="btn btn-ghost">
-              Märgi saadetuks
+              Отметить отправленным
             </SubmitButton>
           </form>
         )}
         {invoice.status === "SENT" && (
           <form action={markDraft}>
-            <SubmitButton className="btn btn-ghost">Tagasi mustandiks</SubmitButton>
+            <SubmitButton className="btn btn-ghost">Вернуть в черновик</SubmitButton>
           </form>
         )}
         <form action={duplicate}>
-          <SubmitButton className="btn btn-ghost">Dubleeri</SubmitButton>
+          <SubmitButton className="btn btn-ghost">Дублировать</SubmitButton>
         </form>
         <form action={remove}>
           <SubmitButton
             className="btn btn-danger"
-            confirm={`Kustutada arve ${invoice.number}?`}
+            confirm={`Удалить счёт ${invoice.number}?`}
           >
-            Kustuta
+            Удалить
           </SubmitButton>
         </form>
         <Link href={`/invoices/${invoice.id}/edit`} className="btn btn-ghost">
-          Muuda
+          Изменить
         </Link>
         <PrintButton />
       </div>

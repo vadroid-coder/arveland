@@ -13,10 +13,10 @@ export async function loginAction(
   const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "/");
 
-  if (!email || !password) return { error: "Sisesta e-post ja parool" };
+  if (!email || !password) return { error: "Введите e-mail и пароль" };
 
   const user = await authenticate(email, password);
-  if (!user) return { error: "Vale e-post või parool" };
+  if (!user) return { error: "Неверный e-mail или пароль" };
 
   await startSession(user);
   redirect(next.startsWith("/") ? next : "/");

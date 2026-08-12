@@ -27,7 +27,7 @@ export default async function EditClientPage({
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <Link href="/clients" className="text-sm text-ink-500 hover:underline">
-          ← Kliendid
+          ← Клиенты
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
           {client.name}
@@ -36,28 +36,28 @@ export default async function EditClientPage({
 
       {error === "duplicate" && (
         <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          Selle registrikoodiga klient on juba olemas — avasin olemasoleva.
+          Клиент с таким регистрационным кодом уже есть — открыл существующего.
         </p>
       )}
 
       <form action={update} className="card space-y-5 p-5">
         <ClientFields client={client} />
         <div className="flex items-center gap-3">
-          <SubmitButton className="btn btn-primary" pendingLabel="Salvestan…">
-            Salvesta
+          <SubmitButton className="btn btn-primary" pendingLabel="Сохраняю…">
+            Сохранить
           </SubmitButton>
           <Link href="/clients" className="btn btn-ghost">
-            Katkesta
+            Отмена
           </Link>
         </div>
       </form>
 
       <section className="card overflow-hidden">
         <h2 className="border-b border-ink-100 px-5 py-3 text-sm font-semibold text-ink-700">
-          Viimased arved
+          Последние счета
         </h2>
         {client.invoices.length === 0 ? (
-          <p className="p-6 text-sm text-ink-400">Arveid pole.</p>
+          <p className="p-6 text-sm text-ink-400">Счетов нет.</p>
         ) : (
           <ul className="divide-y divide-ink-50">
             {client.invoices.map((inv) => (
@@ -84,9 +84,9 @@ export default async function EditClientPage({
         <form action={remove}>
           <SubmitButton
             className="btn btn-danger"
-            confirm={`Kustutada klient "${client.name}"? Arved jäävad alles.`}
+            confirm={`Удалить клиента «${client.name}»? Счета останутся.`}
           >
-            Kustuta klient
+            Удалить клиента
           </SubmitButton>
         </form>
       </section>

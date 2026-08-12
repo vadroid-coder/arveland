@@ -9,13 +9,13 @@ export default function NewBusinessPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <Link href="/businesses" className="text-sm text-ink-500 hover:underline">
-          ← Ettevõtted
+          ← Компании
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
-          Uus ettevõte
+          Новая компания
         </h1>
       </div>
-      <BusinessForm action={createBusiness} submitLabel="Loo ettevõte" />
+      <BusinessForm action={createBusiness} submitLabel="Создать компанию" />
     </div>
   );
 }

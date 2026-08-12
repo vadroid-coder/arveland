@@ -90,9 +90,9 @@ export default function ClientPicker({
         <div className="flex items-start justify-between gap-3">
           <div className="text-sm">
             <p className="font-semibold text-ink-900">{selected.name}</p>
-            <p className="text-ink-500">Reg. nr {selected.regNumber}</p>
+            <p className="text-ink-500">Рег. код {selected.regNumber}</p>
             {selected.vatNumber && (
-              <p className="text-ink-500">KMKR {selected.vatNumber}</p>
+              <p className="text-ink-500">НДС {selected.vatNumber}</p>
             )}
             {selected.address && (
               <p className="whitespace-pre-line text-ink-500">
@@ -110,7 +110,7 @@ export default function ClientPicker({
               setQuery("");
             }}
           >
-            Vaheta
+            Сменить
           </button>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function ClientPicker({
     return (
       <div className="space-y-4 rounded-lg border border-brand-200 bg-brand-50/40 p-4">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold text-ink-800">Uus klient</p>
+          <p className="text-sm font-semibold text-ink-800">Новый клиент</p>
           <button
             type="button"
             className="text-xs text-brand-600 hover:underline"
@@ -130,13 +130,13 @@ export default function ClientPicker({
               onDraft(emptyDraft);
             }}
           >
-            ← Vali olemasolev
+            ← Выбрать существующего
           </button>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="label">Ettevõtte nimi *</label>
+            <label className="label">Название компании *</label>
             <input
               className="field"
               value={draft.name}
@@ -145,7 +145,7 @@ export default function ClientPicker({
             />
           </div>
           <div>
-            <label className="label">Registrikood *</label>
+            <label className="label">Регистрационный код *</label>
             <input
               className="field"
               value={draft.regNumber}
@@ -154,7 +154,7 @@ export default function ClientPicker({
             />
           </div>
           <div>
-            <label className="label">KMKR / VAT</label>
+            <label className="label">Номер НДС</label>
             <input
               className="field"
               value={draft.vatNumber}
@@ -162,7 +162,7 @@ export default function ClientPicker({
             />
           </div>
           <div>
-            <label className="label">E-post</label>
+            <label className="label">E-mail</label>
             <input
               type="email"
               className="field"
@@ -171,7 +171,7 @@ export default function ClientPicker({
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="label">Aadress</label>
+            <label className="label">Адрес</label>
             <textarea
               rows={2}
               className="field"
@@ -188,7 +188,7 @@ export default function ClientPicker({
             onChange={(e) => onSaveClient(e.target.checked)}
             className="h-4 w-4 rounded border-ink-300"
           />
-          Salvesta klient hilisemaks kasutamiseks
+          Сохранить клиента в справочник
         </label>
       </div>
     );
@@ -198,7 +198,7 @@ export default function ClientPicker({
     <div className="relative" ref={box}>
       <input
         className="field"
-        placeholder="Otsi kliendi nime või registrikoodi järgi…"
+        placeholder="Поиск по названию или регистрационному коду…"
         value={query}
         onFocus={() => setOpen(true)}
         onChange={(e) => {
@@ -223,15 +223,15 @@ export default function ClientPicker({
             >
               <span className="block font-medium text-ink-800">{c.name}</span>
               <span className="block text-xs text-ink-400">
-                Reg. {c.regNumber}
-                {c.vatNumber ? ` · KMKR ${c.vatNumber}` : ""}
+                Рег. {c.regNumber}
+                {c.vatNumber ? ` · НДС ${c.vatNumber}` : ""}
               </span>
             </button>
           ))}
 
           {matches.length === 0 && (
             <p className="px-3 py-2 text-sm text-ink-400">
-              Klienti ei leitud
+              Клиент не найден
             </p>
           )}
 
@@ -242,7 +242,7 @@ export default function ClientPicker({
             onClick={startManual}
             className="block w-full px-3 py-2 text-left text-sm font-medium text-brand-600 hover:bg-brand-50"
           >
-            + Sisesta uus klient{query.trim() ? `: “${query.trim()}”` : ""}
+            + Ввести нового клиента{query.trim() ? `: «${query.trim()}»` : ""}
           </button>
         </div>
       )}

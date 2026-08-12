@@ -47,6 +47,7 @@ const business = await prisma.business.create({
     invoicePrefix: PREFIX,
     paymentTermDays: 7,
     currency: "EUR",
+    defaultLanguage: "ET",
     bankName: "LHV Pank",
     bankAccount: "EE95 7700 7710 0123 4567",
     bankSwift: "LHVBEE22",
@@ -92,6 +93,7 @@ const samples = [
     client: clients[0],
     monthOffset: -1,
     status: "PAID",
+    language: "ET",
     items: [
       { description: "Konsultatsiooniteenus, august", quantity: 12, amount: 8500, amountMode: "NET", taxRate: 24 },
       { description: "Projektijuhtimine", quantity: 1, amount: 120000, amountMode: "NET", taxRate: 24 },
@@ -101,6 +103,7 @@ const samples = [
     client: clients[1],
     monthOffset: 0,
     status: "SENT",
+    language: "EN",
     items: [
       { description: "Veebilehe kujundus", quantity: 1, amount: 246000, amountMode: "INCL", taxRate: 24 },
       { description: "Hostimine, 1 kuu", quantity: 1, amount: 2900, amountMode: "NET", taxRate: 9 },
@@ -110,6 +113,7 @@ const samples = [
     client: clients[0],
     monthOffset: 0,
     status: "DRAFT",
+    language: "ET",
     items: [
       { description: "Täiendavad arendustööd", quantity: 6.5, amount: 9000, amountMode: "NET", taxRate: 24 },
     ],
@@ -167,6 +171,7 @@ for (const sample of samples) {
       status: sample.status,
       paidAt: sample.status === "PAID" ? dueDate : null,
       currency: business.currency,
+      language: sample.language,
       subtotal,
       taxTotal,
       total: subtotal + taxTotal,

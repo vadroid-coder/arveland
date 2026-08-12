@@ -84,7 +84,7 @@ export default function TaxRateSelect({
         }}
         className="field pr-7 text-right tabular-nums"
         placeholder="0"
-        aria-label="Maksumäär protsentides"
+        aria-label="Ставка налога в процентах"
       />
       <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-xs text-ink-400">
         %
@@ -95,7 +95,7 @@ export default function TaxRateSelect({
           {visible.length > 0 && (
             <>
               <p className="px-3 py-1 text-[10px] font-semibold tracking-wide text-ink-400 uppercase">
-                Salvestatud määrad
+                Сохранённые ставки
               </p>
               {visible.map((r) => (
                 <button
@@ -124,14 +124,14 @@ export default function TaxRateSelect({
                 onClick={create}
                 className="block w-full px-3 py-1.5 text-left text-sm font-medium text-brand-600 hover:bg-brand-50"
               >
-                + Loo maksumäär {formatRate(parsed)}
+                + Создать ставку {formatRate(parsed)}
               </button>
             </>
           )}
 
           {visible.length === 0 && !isNumber && (
             <p className="px-3 py-2 text-xs text-ink-400">
-              Sisesta määr, nt 22
+              Введите ставку, например 22
             </p>
           )}
         </div>

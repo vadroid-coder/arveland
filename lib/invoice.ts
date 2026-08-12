@@ -48,8 +48,9 @@ export function toDateInput(date: Date) {
   return new Date(date).toISOString().slice(0, 10);
 }
 
-export function formatDate(date: Date) {
-  return new Date(date).toLocaleDateString("et-EE", {
+/** `locale` defaults to the admin panel's; the invoice document passes its own. */
+export function formatDate(date: Date, locale = "ru-RU") {
+  return new Date(date).toLocaleDateString(locale, {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -57,18 +58,18 @@ export function formatDate(date: Date) {
 }
 
 export const MONTH_NAMES = [
-  "Jaanuar",
-  "Veebruar",
-  "Märts",
-  "Aprill",
-  "Mai",
-  "Juuni",
-  "Juuli",
-  "August",
-  "September",
-  "Oktoober",
-  "November",
-  "Detsember",
+  "Январь",
+  "Февраль",
+  "Март",
+  "Апрель",
+  "Май",
+  "Июнь",
+  "Июль",
+  "Август",
+  "Сентябрь",
+  "Октябрь",
+  "Ноябрь",
+  "Декабрь",
 ];
 
 export function monthLabel(year: number, month: number) {

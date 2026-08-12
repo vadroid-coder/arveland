@@ -7,15 +7,15 @@ export const dynamic = "force-dynamic";
 
 const NOTICES: Record<string, { text: string; tone: string }> = {
   invalid: {
-    text: "E-post on kohustuslik ja parool peab olema vähemalt 6 tähemärki.",
+    text: "E-mail обязателен, пароль — минимум 6 символов.",
     tone: "bg-red-50 text-red-700",
   },
   duplicate: {
-    text: "Selle e-postiga kasutaja on juba olemas.",
+    text: "Пользователь с таким e-mail уже существует.",
     tone: "bg-red-50 text-red-700",
   },
   self: {
-    text: "Iseennast ei saa kustutada.",
+    text: "Себя удалить нельзя.",
     tone: "bg-red-50 text-red-700",
   },
 };
@@ -38,12 +38,12 @@ export default async function AdminPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-          Kasutajad
+          Пользователи
         </h1>
         <p className="text-sm text-ink-500">
-          Iga konto on täiesti eraldi: oma ettevõtted, kliendid ja arved. Ka
-          administraator näeb ainult enda andmeid — administraatori õigus
-          puudutab üksnes kasutajate haldust.
+          Каждый аккаунт полностью отдельный: свои компании, клиенты и счета.
+          Администратор тоже видит только свои данные — права администратора
+          касаются только управления пользователями.
         </p>
       </div>
 
@@ -54,7 +54,7 @@ export default async function AdminPage({
       )}
       {(created || saved) && (
         <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-          {created ? "Kasutaja loodud." : "Muudatused salvestatud."}
+          {created ? "Пользователь создан." : "Изменения сохранены."}
         </p>
       )}
 
@@ -69,21 +69,21 @@ export default async function AdminPage({
                   <div>
                     <p className="font-medium text-ink-900">{u.email}</p>
                     <p className="text-xs text-ink-400">
-                      Loodud {u.createdAt.toLocaleDateString("et-EE")} ·{" "}
-                      {u._count.businesses} ettevõtet
-                      {u.id === admin.uid ? " · see oled sina" : ""}
+                      Создан {u.createdAt.toLocaleDateString("ru-RU")} ·{" "}
+                      компаний: {u._count.businesses}
+                      {u.id === admin.uid ? " · это вы" : ""}
                     </p>
                   </div>
                   {!u.active && (
                     <span className="badge bg-ink-100 text-ink-500">
-                      Deaktiveeritud
+                      Деактивирован
                     </span>
                   )}
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div>
-                    <label className="label">Nimi</label>
+                    <label className="label">Имя</label>
                     <input
                       name="name"
                       className="field"
@@ -91,19 +91,19 @@ export default async function AdminPage({
                     />
                   </div>
                   <div>
-                    <label className="label">Roll</label>
+                    <label className="label">Роль</label>
                     <select name="role" className="field" defaultValue={u.role}>
-                      <option value="USER">Kasutaja</option>
-                      <option value="ADMIN">Administraator</option>
+                      <option value="USER">Пользователь</option>
+                      <option value="ADMIN">Администратор</option>
                     </select>
                   </div>
                   <div>
-                    <label className="label">Uus parool</label>
+                    <label className="label">Новый пароль</label>
                     <input
                       name="password"
                       type="password"
                       className="field"
-                      placeholder="Jäta tühjaks"
+                      placeholder="Оставьте пустым"
                       minLength={6}
                     />
                   </div>
@@ -117,18 +117,18 @@ export default async function AdminPage({
                       defaultChecked={u.active}
                       className="h-4 w-4 rounded border-ink-300"
                     />
-                    Aktiivne
+                    Активен
                   </label>
                   <SubmitButton className="btn btn-primary ml-auto">
-                    Salvesta
+                    Сохранить
                   </SubmitButton>
                   {u.id !== admin.uid && (
                     <SubmitButton
                       className="btn btn-danger"
                       formAction={remove}
-                      confirm={`Kustutada kasutaja ${u.email}? Koos temaga kustuvad tema ${u._count.businesses} ettevõtet, kliendid ja arved. Seda ei saa tagasi võtta.`}
+                      confirm={`Удалить пользователя ${u.email}? Вместе с ним будут удалены его компании (${u._count.businesses}), клиенты и счета. Это необратимо.`}
                     >
-                      Kustuta
+                      Удалить
                     </SubmitButton>
                   )}
                 </div>
@@ -138,17 +138,17 @@ export default async function AdminPage({
         </div>
 
         <form action={createUser} className="card h-fit space-y-4 p-5">
-          <h2 className="text-sm font-semibold text-ink-700">Uus kasutaja</h2>
+          <h2 className="text-sm font-semibold text-ink-700">Новый пользователь</h2>
           <div>
-            <label className="label">Nimi</label>
+            <label className="label">Имя</label>
             <input name="name" className="field" />
           </div>
           <div>
-            <label className="label">E-post *</label>
+            <label className="label">E-mail *</label>
             <input name="email" type="email" className="field" required />
           </div>
           <div>
-            <label className="label">Parool * (min 6)</label>
+            <label className="label">Пароль * (минимум 6)</label>
             <input
               name="password"
               type="password"
@@ -158,14 +158,14 @@ export default async function AdminPage({
             />
           </div>
           <div>
-            <label className="label">Roll</label>
+            <label className="label">Роль</label>
             <select name="role" className="field" defaultValue="USER">
-              <option value="USER">Kasutaja</option>
-              <option value="ADMIN">Administraator</option>
+              <option value="USER">Пользователь</option>
+              <option value="ADMIN">Администратор</option>
             </select>
           </div>
           <SubmitButton className="btn btn-primary w-full">
-            Loo kasutaja
+            Создать пользователя
           </SubmitButton>
         </form>
       </div>

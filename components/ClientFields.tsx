@@ -12,11 +12,11 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
   return (
     <div className="@container grid gap-4 @md:grid-cols-2">
       <div>
-        <label className="label">Ettevõtte nimi *</label>
+        <label className="label">Название компании *</label>
         <input name="name" className="field" defaultValue={c.name ?? ""} required />
       </div>
       <div>
-        <label className="label">Registrikood *</label>
+        <label className="label">Регистрационный код *</label>
         <input
           name="regNumber"
           className="field"
@@ -25,7 +25,7 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
         />
       </div>
       <div>
-        <label className="label">KMKR / VAT number</label>
+        <label className="label">Номер НДС (KMKR / VAT)</label>
         <input
           name="vatNumber"
           className="field"
@@ -33,7 +33,7 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
         />
       </div>
       <div>
-        <label className="label">E-post</label>
+        <label className="label">E-mail</label>
         <input
           name="email"
           type="email"
@@ -42,11 +42,11 @@ export default function ClientFields({ client }: { client?: ClientLike }) {
         />
       </div>
       <div>
-        <label className="label">Telefon</label>
+        <label className="label">Телефон</label>
         <input name="phone" className="field" defaultValue={c.phone ?? ""} />
       </div>
       <div className="@md:col-span-2">
-        <label className="label">Aadress</label>
+        <label className="label">Адрес</label>
         <textarea
           name="address"
           rows={2}

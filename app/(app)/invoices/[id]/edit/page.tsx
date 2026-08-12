@@ -37,7 +37,7 @@ export default async function EditInvoicePage({
           ← {invoice.number}
         </Link>
         <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink-900">
-          Muuda arvet
+          Редактирование счёта
         </h1>
         <p className="text-sm text-ink-500">{invoice.business.name}</p>
       </div>
@@ -49,6 +49,7 @@ export default async function EditInvoicePage({
           currency: invoice.business.currency,
           paymentTermDays: invoice.business.paymentTermDays,
           invoicePrefix: invoice.business.invoicePrefix,
+          defaultLanguage: invoice.business.defaultLanguage,
         }}
         clients={clients.map((c) => ({
           id: c.id,
@@ -68,6 +69,7 @@ export default async function EditInvoicePage({
           id: invoice.id,
           number: invoice.number,
           status: invoice.status,
+          language: invoice.language,
           notes: invoice.notes,
           issueDate: toDateInput(invoice.issueDate),
           dueDate: toDateInput(invoice.dueDate),

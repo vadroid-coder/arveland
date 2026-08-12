@@ -1,5 +1,6 @@
 import Link from "next/link";
 import LogoUpload from "./LogoUpload";
+import { DOC_LANGUAGES } from "@/lib/doc-language";
 import SubmitButton from "./SubmitButton";
 
 type BusinessLike = {
@@ -14,6 +15,7 @@ type BusinessLike = {
   invoicePrefix?: string;
   paymentTermDays?: number;
   currency?: string;
+  defaultLanguage?: string;
   bankName?: string | null;
   bankAccount?: string | null;
   bankSwift?: string | null;
@@ -35,10 +37,10 @@ export default function BusinessForm({
     <form action={action} className="space-y-5">
       <section className="card p-5">
         <h2 className="mb-4 text-sm font-semibold text-ink-700">
-          Ettevõtte andmed
+          Реквизиты компании
         </h2>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Ettevõtte nimi *" className="sm:col-span-2">
+          <Field label="Название компании *" className="sm:col-span-2">
             <input
               name="name"
               className="field"
@@ -46,21 +48,21 @@ export default function BusinessForm({
               required
             />
           </Field>
-          <Field label="Registrikood">
+          <Field label="Регистрационный код">
             <input
               name="regNumber"
               className="field"
               defaultValue={b.regNumber ?? ""}
             />
           </Field>
-          <Field label="KMKR / VAT number">
+          <Field label="Номер НДС (KMKR / VAT)">
             <input
               name="vatNumber"
               className="field"
               defaultValue={b.vatNumber ?? ""}
             />
           </Field>
-          <Field label="Aadress" className="sm:col-span-2">
+          <Field label="Адрес" className="sm:col-span-2">
             <textarea
               name="address"
               rows={2}
@@ -68,7 +70,7 @@ export default function BusinessForm({
               defaultValue={b.address ?? ""}
             />
           </Field>
-          <Field label="E-post">
+          <Field label="E-mail">
             <input
               name="email"
               type="email"
@@ -76,10 +78,10 @@ export default function BusinessForm({
               defaultValue={b.email ?? ""}
             />
           </Field>
-          <Field label="Telefon">
+          <Field label="Телефон">
             <input name="phone" className="field" defaultValue={b.phone ?? ""} />
           </Field>
-          <Field label="Veebileht" className="sm:col-span-2">
+          <Field label="Сайт" className="sm:col-span-2">
             <input
               name="website"
               className="field"
@@ -94,10 +96,10 @@ export default function BusinessForm({
 
       <section className="card p-5">
         <h2 className="mb-4 text-sm font-semibold text-ink-700">
-          Arve seaded
+          Настройки счетов
         </h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Arve numbri prefiks *">
+        <div className="grid gap-4 sm:grid-cols-4">
+          <Field label="Префикс номера *">
             <input
               name="invoicePrefix"
               className="field uppercase"
@@ -106,10 +108,10 @@ export default function BusinessForm({
               required
             />
             <p className="mt-1 text-xs text-ink-400">
-              Formaat: PREFIX-YY-M-NR
+              Формат: PREFIX-YY-M-NR
             </p>
           </Field>
-          <Field label="Maksetähtaeg (päeva)">
+          <Field label="Срок оплаты (дней)">
             <input
               name="paymentTermDays"
               type="number"
@@ -118,7 +120,7 @@ export default function BusinessForm({
               defaultValue={b.paymentTermDays ?? 7}
             />
           </Field>
-          <Field label="Valuuta">
+          <Field label="Валюта">
             <select
               name="currency"
               className="field"
@@ -129,18 +131,34 @@ export default function BusinessForm({
               ))}
             </select>
           </Field>
+          <Field label="Язык счетов">
+            <select
+              name="defaultLanguage"
+              className="field"
+              defaultValue={b.defaultLanguage ?? "ET"}
+            >
+              {DOC_LANGUAGES.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-ink-400">
+              Подставляется в новый счёт
+            </p>
+          </Field>
         </div>
       </section>
 
       <section className="card p-5">
         <h2 className="mb-1 text-sm font-semibold text-ink-700">
-          Pangarekvisiidid
+          Банковские реквизиты
         </h2>
         <p className="mb-4 text-xs text-ink-400">
-          Kuvatakse arvel eraldi esiletõstetud plokis — kuhu raha kanda.
+          Печатаются на счёте отдельным выделенным блоком — куда переводить деньги.
         </p>
         <div className="grid gap-4 sm:grid-cols-3">
-          <Field label="Panga nimi">
+          <Field label="Название банка">
             <input
               name="bankName"
               className="field"
@@ -148,7 +166,7 @@ export default function BusinessForm({
               placeholder="LHV Pank"
             />
           </Field>
-          <Field label="Arvelduskonto (IBAN)">
+          <Field label="Расчётный счёт (IBAN)">
             <input
               name="bankAccount"
               className="field"
@@ -163,24 +181,24 @@ export default function BusinessForm({
               defaultValue={b.bankSwift ?? ""}
             />
           </Field>
-          <Field label="Arve jalus / märkus" className="sm:col-span-3">
+          <Field label="Примечание в подвале счёта" className="sm:col-span-3">
             <textarea
               name="footerNote"
               rows={2}
               className="field"
               defaultValue={b.footerNote ?? ""}
-              placeholder="Viivis 0,05% päevas."
+              placeholder="Пеня 0,05% в день."
             />
           </Field>
         </div>
       </section>
 
       <div className="flex items-center gap-3">
-        <SubmitButton className="btn btn-primary" pendingLabel="Salvestan…">
+        <SubmitButton className="btn btn-primary" pendingLabel="Сохраняю…">
           {submitLabel}
         </SubmitButton>
         <Link href="/businesses" className="btn btn-ghost">
-          Katkesta
+          Отмена
         </Link>
       </div>
     </form>

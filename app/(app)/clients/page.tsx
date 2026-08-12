@@ -41,7 +41,7 @@ export default async function ClientsPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-          Kliendid
+          Клиенты
         </h1>
         <p className="text-sm text-ink-500">{active.name}</p>
       </div>
@@ -50,25 +50,25 @@ export default async function ClientsPage({
         <div className="space-y-4">
           <form className="card flex items-end gap-3 p-3">
             <div className="flex-1">
-              <label className="label">Otsi nime või registrikoodi järgi</label>
+              <label className="label">Поиск по названию или рег. коду</label>
               <input name="q" defaultValue={search} className="field" />
             </div>
-            <button className="btn btn-ghost">Otsi</button>
+            <button className="btn btn-ghost">Найти</button>
           </form>
 
           <div className="card overflow-hidden">
             {clients.length === 0 ? (
               <p className="p-10 text-center text-sm text-ink-500">
-                Kliente ei leitud.
+                Клиенты не найдены.
               </p>
             ) : (
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-ink-100 text-left text-xs tracking-wide text-ink-400 uppercase">
-                    <th className="px-4 py-2 font-medium">Nimi</th>
-                    <th className="px-4 py-2 font-medium">Registrikood</th>
-                    <th className="px-4 py-2 font-medium">KMKR</th>
-                    <th className="px-4 py-2 text-right font-medium">Arveid</th>
+                    <th className="px-4 py-2 font-medium">Название</th>
+                    <th className="px-4 py-2 font-medium">Рег. код</th>
+                    <th className="px-4 py-2 font-medium">НДС</th>
+                    <th className="px-4 py-2 text-right font-medium">Счетов</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,15 +106,15 @@ export default async function ClientsPage({
         </div>
 
         <form action={create} className="card h-fit space-y-4 p-5">
-          <h2 className="text-sm font-semibold text-ink-700">Uus klient</h2>
+          <h2 className="text-sm font-semibold text-ink-700">Новый клиент</h2>
           {error === "required" && (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
-              Nimi ja registrikood on kohustuslikud.
+              Название и регистрационный код обязательны.
             </p>
           )}
           <ClientFields />
           <SubmitButton className="btn btn-primary w-full">
-            Lisa klient
+            Добавить клиента
           </SubmitButton>
         </form>
       </div>

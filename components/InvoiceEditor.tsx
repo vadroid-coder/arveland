@@ -17,6 +17,7 @@ import {
   taxBreakdown,
   toCents,
 } from "@/lib/money";
+import { DOC_LANGUAGES } from "@/lib/doc-language";
 import { saveInvoice, type InvoicePayload } from "@/app/(app)/invoices/actions";
 
 type Line = {
@@ -32,6 +33,7 @@ export type EditorInvoice = {
   id: string;
   number: string;
   status: string;
+  language: string;
   notes: string | null;
   issueDate: string;
   dueDate: string;
@@ -79,6 +81,7 @@ export default function InvoiceEditor({
     currency: string;
     paymentTermDays: number;
     invoicePrefix: string;
+    defaultLanguage: string;
   };
   clients: ClientOption[];
   initialRates: number[];
@@ -116,6 +119,9 @@ export default function InvoiceEditor({
   const [dueDate, setDueDate] = useState(invoice?.dueDate ?? defaultDueDate);
   const [dueTouched, setDueTouched] = useState(Boolean(invoice));
   const [status, setStatus] = useState(invoice?.status ?? "DRAFT");
+  const [language, setLanguage] = useState(
+    invoice?.language ?? business.defaultLanguage ?? "ET",
+  );
   const [notes, setNotes] = useState(invoice?.notes ?? "");
 
   const [lines, setLines] = useState<Line[]>(() =>
@@ -177,6 +183,7 @@ export default function InvoiceEditor({
       issueDate,
       dueDate,
       status,
+      language,
       notes,
       items: lines.map((l) => ({
         description: l.description,
@@ -202,9 +209,9 @@ export default function InvoiceEditor({
     <div className="space-y-5">
       <section className="card p-5">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-ink-700">Klient</h2>
+          <h2 className="text-sm font-semibold text-ink-700">Клиент</h2>
           <Link href="/clients" className="text-xs text-brand-600 hover:underline">
-            Halda kliente
+            Управление клиентами
           </Link>
         </div>
         <ClientPicker
@@ -219,10 +226,12 @@ export default function InvoiceEditor({
       </section>
 
       <section className="card p-5">
-        <h2 className="mb-4 text-sm font-semibold text-ink-700">Arve andmed</h2>
-        <div className="grid gap-4 sm:grid-cols-4">
+        <h2 className="mb-4 text-sm font-semibold text-ink-700">
+          Данные счёта
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div>
-            <label className="label">Arve number</label>
+            <label className="label">Номер счёта</label>
             <input
               className="field bg-ink-50 font-medium"
               value={invoice?.number ?? numberPreview}
@@ -230,12 +239,12 @@ export default function InvoiceEditor({
             />
             {!invoice && (
               <p className="mt-1 text-xs text-ink-400">
-                Määratakse salvestamisel
+                Присваивается при сохранении
               </p>
             )}
           </div>
           <div>
-            <label className="label">Arve kuupäev</label>
+            <label className="label">Дата выставления</label>
             <input
               type="date"
               className="field"
@@ -244,7 +253,7 @@ export default function InvoiceEditor({
             />
           </div>
           <div>
-            <label className="label">Maksetähtaeg</label>
+            <label className="label">Срок оплаты</label>
             <input
               type="date"
               className="field"
@@ -256,36 +265,51 @@ export default function InvoiceEditor({
             />
             {!dueTouched && (
               <p className="mt-1 text-xs text-ink-400">
-                +{business.paymentTermDays} päeva
+                +{business.paymentTermDays} дн.
               </p>
             )}
           </div>
           <div>
-            <label className="label">Staatus</label>
+            <label className="label">Язык документа</label>
+            <select
+              className="field"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              {DOC_LANGUAGES.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-1 text-xs text-ink-400">Только на печати</p>
+          </div>
+          <div>
+            <label className="label">Статус</label>
             <select
               className="field"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             >
-              <option value="DRAFT">Mustand</option>
-              <option value="SENT">Saadetud</option>
-              <option value="PAID">Makstud</option>
+              <option value="DRAFT">Черновик</option>
+              <option value="SENT">Отправлен</option>
+              <option value="PAID">Оплачен</option>
             </select>
           </div>
         </div>
       </section>
 
       <section className="card overflow-visible p-5">
-        <h2 className="mb-4 text-sm font-semibold text-ink-700">Read</h2>
+        <h2 className="mb-4 text-sm font-semibold text-ink-700">Позиции</h2>
 
         <div className="space-y-2">
           <div className="hidden gap-2 px-1 text-xs tracking-wide text-ink-400 uppercase lg:grid lg:grid-cols-[1fr_5rem_8rem_7rem_6rem_8rem_2rem]">
-            <span>Kirjeldus</span>
-            <span className="text-right">Kogus</span>
-            <span className="text-right">Summa</span>
-            <span className="text-center">Režiim</span>
-            <span className="text-right">KM</span>
-            <span className="text-right">Kokku</span>
+            <span>Наименование</span>
+            <span className="text-right">Кол-во</span>
+            <span className="text-right">Сумма</span>
+            <span className="text-center">Режим</span>
+            <span className="text-right">Налог</span>
+            <span className="text-right">Итого</span>
             <span />
           </div>
 
@@ -298,7 +322,7 @@ export default function InvoiceEditor({
               >
                 <input
                   className="field"
-                  placeholder="Teenuse või kauba nimetus"
+                  placeholder="Название услуги или товара"
                   value={line.description}
                   onChange={(e) =>
                     patchLine(line.key, { description: e.target.value })
@@ -344,7 +368,7 @@ export default function InvoiceEditor({
                     )
                   }
                   className="grid h-9 w-8 place-items-center rounded-lg text-ink-400 transition hover:bg-red-50 hover:text-red-600"
-                  title="Kustuta rida"
+                  title="Удалить строку"
                 >
                   ×
                 </button>
@@ -358,27 +382,27 @@ export default function InvoiceEditor({
           className="btn btn-ghost mt-3"
           onClick={() => setLines((ls) => [...ls, blankLine(defaultRate)])}
         >
-          + Lisa rida
+          + Добавить строку
         </button>
 
         <div className="mt-6 flex justify-end">
           <dl className="w-full max-w-xs space-y-1.5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-ink-500">Summa ilma käibemaksuta</dt>
+              <dt className="text-ink-500">Сумма без налога</dt>
               <dd className="tabular-nums">
                 {formatMoney(totals.subtotal, business.currency)}
               </dd>
             </div>
             {breakdown.map((b) => (
               <div key={b.rate} className="flex justify-between">
-                <dt className="text-ink-500">Käibemaks {formatRate(b.rate)}</dt>
+                <dt className="text-ink-500">Налог {formatRate(b.rate)}</dt>
                 <dd className="tabular-nums">
                   {formatMoney(b.tax, business.currency)}
                 </dd>
               </div>
             ))}
             <div className="flex justify-between border-t border-ink-200 pt-2 text-base font-semibold">
-              <dt>Kokku</dt>
+              <dt>Итого</dt>
               <dd className="tabular-nums">
                 {formatMoney(totals.total, business.currency)}
               </dd>
@@ -388,13 +412,13 @@ export default function InvoiceEditor({
       </section>
 
       <section className="card p-5">
-        <label className="label">Märkused arvel</label>
+        <label className="label">Примечание на счёте</label>
         <textarea
           rows={3}
           className="field"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Vabatekst, mis kuvatakse arve lõpus"
+          placeholder="Свободный текст в конце документа — печатается как есть, на языке, на котором вы его напишете"
         />
       </section>
 
@@ -411,18 +435,25 @@ export default function InvoiceEditor({
           onClick={submit}
           disabled={pending || !clientReady}
         >
-          {pending ? "Salvestan…" : invoice ? "Salvesta muudatused" : "Loo arve"}
+          {pending
+            ? "Сохраняю…"
+            : invoice
+              ? "Сохранить изменения"
+              : "Создать счёт"}
         </button>
-        <Link href={invoice ? `/invoices/${invoice.id}` : "/"} className="btn btn-ghost">
-          Katkesta
+        <Link
+          href={invoice ? `/invoices/${invoice.id}` : "/"}
+          className="btn btn-ghost"
+        >
+          Отмена
         </Link>
         {!clientReady && (
           <span className="text-xs text-ink-400">
-            Vali klient või sisesta nimi ja registrikood
+            Выберите клиента или введите название и рег. номер
           </span>
         )}
         <span className="ml-auto text-sm text-ink-500">
-          Kokku{" "}
+          Итого{" "}
           <span className="font-semibold text-ink-900 tabular-nums">
             {formatMoney(totals.total, business.currency)}
           </span>
@@ -448,8 +479,8 @@ function ModeToggle({
           onClick={() => onChange(m)}
           title={
             m === "NET"
-              ? "Sisestatud summa on ilma käibemaksuta"
-              : "Sisestatud summa sisaldab käibemaksu"
+              ? "Введённая сумма — без налога"
+              : "Введённая сумма — включая налог"
           }
           className={`h-full flex-1 rounded-md transition ${
             value === m

@@ -44,23 +44,23 @@ export default async function AppLayout({
           <div className="hidden text-right sm:block">
             <p className="text-[13px] leading-tight font-medium">{user.name}</p>
             <p className="text-[11px] leading-tight text-white/50">
-              {user.role === "ADMIN" ? "Administraator" : "Kasutaja"}
+              {user.role === "ADMIN" ? "Администратор" : "Пользователь"}
             </p>
           </div>
           <form action={logout}>
             <button className="rounded-lg border border-white/15 px-2.5 py-1.5 text-xs text-white/80 transition hover:bg-white/10">
-              Logi välja
+              Выйти
             </button>
           </form>
         </div>
 
         <nav className="mx-auto flex max-w-7xl items-end gap-6 px-5">
           <NavLink href="/" exact>
-            Arved
+            Счета
           </NavLink>
-          <NavLink href="/clients">Kliendid</NavLink>
-          <NavLink href="/businesses">Ettevõtted</NavLink>
-          {user.role === "ADMIN" && <NavLink href="/admin">Kasutajad</NavLink>}
+          <NavLink href="/clients">Клиенты</NavLink>
+          <NavLink href="/businesses">Компании</NavLink>
+          {user.role === "ADMIN" && <NavLink href="/admin">Пользователи</NavLink>}
         </nav>
       </header>
 

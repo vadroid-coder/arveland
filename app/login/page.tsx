@@ -22,7 +22,7 @@ export default async function LoginPage({
           <Logo className="h-11 w-11" />
           <div className="text-center">
             <h1 className="text-xl font-semibold text-ink-900">ArveMaa</h1>
-            <p className="text-sm text-ink-500">Arvete haldus</p>
+            <p className="text-sm text-ink-500">Выставление счетов</p>
           </div>
         </div>
 

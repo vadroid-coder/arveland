@@ -76,26 +76,26 @@ export default async function DashboardPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-            Arved
+            Счета
           </h1>
           <p className="text-sm text-ink-500">
-            {active.name} · {invoices.length} arvet aastal {year}
+            {active.name} · счетов за {year}: {invoices.length}
           </p>
         </div>
         <Link href="/invoices/new" className="btn btn-primary">
-          + Uus arve
+          + Новый счёт
         </Link>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <Stat label="Kokku" value={formatMoney(totals.total, active.currency)} />
+        <Stat label="Всего" value={formatMoney(totals.total, active.currency)} />
         <Stat
-          label="Makstud"
+          label="Оплачено"
           value={formatMoney(totals.paid, active.currency)}
           tone="text-emerald-600"
         />
         <Stat
-          label="Laekumata"
+          label="Не оплачено"
           value={formatMoney(totals.open, active.currency)}
           tone="text-amber-600"
         />
@@ -103,16 +103,16 @@ export default async function DashboardPage({
 
       <form className="card flex flex-wrap items-end gap-3 p-3">
         <div className="min-w-[10rem] flex-1">
-          <label className="label">Otsi</label>
+          <label className="label">Поиск</label>
           <input
             name="q"
             defaultValue={q}
             className="field"
-            placeholder="Arve nr, klient, reg. nr"
+            placeholder="Номер счёта, клиент, рег. код"
           />
         </div>
         <div>
-          <label className="label">Aasta</label>
+          <label className="label">Год</label>
           <select name="year" defaultValue={year} className="field w-28">
             {yearOptions.map((y) => (
               <option key={y} value={y}>
@@ -122,23 +122,23 @@ export default async function DashboardPage({
           </select>
         </div>
         <div>
-          <label className="label">Staatus</label>
+          <label className="label">Статус</label>
           <select name="status" defaultValue={status} className="field w-40">
-            <option value="">Kõik</option>
-            <option value="DRAFT">Mustand</option>
-            <option value="SENT">Saadetud</option>
-            <option value="PAID">Makstud</option>
-            <option value="UNPAID">Maksmata</option>
+            <option value="">Все</option>
+            <option value="DRAFT">Черновик</option>
+            <option value="SENT">Отправлен</option>
+            <option value="PAID">Оплачен</option>
+            <option value="UNPAID">Не оплачен</option>
           </select>
         </div>
-        <button className="btn btn-ghost">Filtreeri</button>
+        <button className="btn btn-ghost">Фильтр</button>
       </form>
 
       {invoices.length === 0 ? (
         <div className="card p-12 text-center">
-          <p className="text-sm text-ink-500">Arveid ei leitud.</p>
+          <p className="text-sm text-ink-500">Счета не найдены.</p>
           <Link href="/invoices/new" className="btn btn-primary mt-4">
-            Loo esimene arve
+            Создать первый счёт
           </Link>
         </div>
       ) : (
@@ -152,7 +152,7 @@ export default async function DashboardPage({
                     {monthLabel(year, month)}
                   </h2>
                   <p className="text-sm text-ink-500">
-                    {list.length} arvet ·{" "}
+                    счетов: {list.length} ·{" "}
                     <span className="font-semibold text-ink-800">
                       {formatMoney(monthTotal, active.currency)}
                     </span>
@@ -161,13 +161,13 @@ export default async function DashboardPage({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-ink-100 text-left text-xs tracking-wide text-ink-400 uppercase">
-                      <th className="px-4 py-2 font-medium">Number</th>
-                      <th className="px-4 py-2 font-medium">Klient</th>
-                      <th className="px-4 py-2 font-medium">Kuupäev</th>
-                      <th className="px-4 py-2 font-medium">Tähtaeg</th>
-                      <th className="px-4 py-2 font-medium">Staatus</th>
+                      <th className="px-4 py-2 font-medium">Номер</th>
+                      <th className="px-4 py-2 font-medium">Клиент</th>
+                      <th className="px-4 py-2 font-medium">Дата</th>
+                      <th className="px-4 py-2 font-medium">Срок оплаты</th>
+                      <th className="px-4 py-2 font-medium">Статус</th>
                       <th className="px-4 py-2 text-right font-medium">
-                        Summa
+                        Сумма
                       </th>
                     </tr>
                   </thead>

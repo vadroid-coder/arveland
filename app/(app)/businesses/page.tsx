@@ -19,20 +19,20 @@ export default async function BusinessesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-ink-900">
-            Ettevõtted
+            Компании
           </h1>
           <p className="text-sm text-ink-500">
-            Iga ettevõte on eraldi arvete seeria ja ilmub päises lülitina.
+            Каждая компания — отдельная серия счетов и отдельный пункт в переключателе.
           </p>
         </div>
         <Link href="/businesses/new" className="btn btn-primary">
-          + Uus ettevõte
+          + Новая компания
         </Link>
       </div>
 
       {businesses.length === 0 ? (
         <div className="card p-12 text-center text-sm text-ink-500">
-          Ühtegi ettevõtet pole veel lisatud.
+          Ни одной компании ещё не добавлено.
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -59,19 +59,19 @@ export default async function BusinessesPage() {
                 </div>
                 {b.id === active?.id && (
                   <span className="badge bg-brand-50 text-brand-700">
-                    Aktiivne
+                    Активна
                   </span>
                 )}
               </div>
               <div>
                 <p className="font-medium text-ink-900">{b.name}</p>
                 <p className="text-xs text-ink-400">
-                  {b.regNumber ? `Reg. ${b.regNumber} · ` : ""}
+                  {b.regNumber ? `Рег. ${b.regNumber} · ` : ""}
                   {b.invoicePrefix}
                 </p>
               </div>
               <p className="mt-auto text-xs text-ink-500">
-                {countFor(b.id)} arvet · maksetähtaeg {b.paymentTermDays} p ·{" "}
+                счетов: {countFor(b.id)} · срок оплаты {b.paymentTermDays} дн. ·{" "}
                 {b.currency}
               </p>
             </Link>

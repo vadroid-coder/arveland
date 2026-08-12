@@ -3,14 +3,14 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ArveMaa",
-  description: "Arvete haldus — invoicing admin panel",
+  description: "Выставление и хранение счетов",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="et">
+    <html lang="ru">
       <body>{children}</body>
     </html>
   );

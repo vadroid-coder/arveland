@@ -15,9 +15,14 @@ export function fromCents(cents: number): string {
   return (cents / 100).toFixed(2);
 }
 
-export function formatMoney(cents: number, currency = "EUR"): string {
+/** `locale` defaults to the admin panel's; the invoice document passes its own. */
+export function formatMoney(
+  cents: number,
+  currency = "EUR",
+  locale = "ru-RU",
+): string {
   try {
-    return new Intl.NumberFormat("et-EE", {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency,
       minimumFractionDigits: 2,

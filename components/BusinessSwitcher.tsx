@@ -41,7 +41,7 @@ export default function BusinessSwitcher({
   if (businesses.length === 0) {
     return (
       <Link href="/businesses/new" className="btn btn-primary h-9">
-        + Lisa ettevõte
+        + Добавить компанию
       </Link>
     );
   }
@@ -70,7 +70,7 @@ export default function BusinessSwitcher({
       {open && (
         <div className="absolute left-0 z-50 mt-1.5 w-72 overflow-hidden rounded-xl border border-ink-200 bg-white py-1 shadow-lg">
           <p className="px-3 py-1.5 text-[11px] font-semibold tracking-wide text-ink-400 uppercase">
-            Ettevõtted
+            Компании
           </p>
           {businesses.map((b) => (
             <button
@@ -108,14 +108,14 @@ export default function BusinessSwitcher({
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm font-medium text-brand-600 hover:bg-ink-50"
           >
-            + Uus ettevõte
+            + Новая компания
           </Link>
           <Link
             href="/businesses"
             onClick={() => setOpen(false)}
             className="block px-3 py-2 text-sm text-ink-600 hover:bg-ink-50"
           >
-            Halda ettevõtteid
+            Управление компаниями
           </Link>
         </div>
       )}

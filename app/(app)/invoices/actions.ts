@@ -30,6 +30,7 @@ export type InvoicePayload = {
   issueDate: string;
   dueDate: string;
   status: string;
+  language: string;
   notes: string;
   items: ItemPayload[];
 };
@@ -43,16 +44,16 @@ function num(value: string, fallback = 0) {
 
 export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> {
   const business = await ownedBusiness(payload.businessId);
-  if (!business) return { ok: false, error: "Ettevõtet ei leitud" };
+  if (!business) return { ok: false, error: "Компания не найдена" };
 
   if (payload.id && !(await ownedInvoice(payload.id)))
-    return { ok: false, error: "Arvet ei leitud" };
+    return { ok: false, error: "Счёт не найден" };
 
   const rawItems = payload.items.filter(
     (i) => i.description.trim() !== "" || toCents(i.amount) !== 0,
   );
   if (rawItems.length === 0)
-    return { ok: false, error: "Lisa vähemalt üks rida" };
+    return { ok: false, error: "Добавьте хотя бы одну строку" };
 
   // --- client -------------------------------------------------------------
   let clientId = payload.clientId;
@@ -68,7 +69,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     const existing = await prisma.client.findFirst({
       where: { id: clientId, businessId: business.id },
     });
-    if (!existing) return { ok: false, error: "Klienti ei leitud" };
+    if (!existing) return { ok: false, error: "Клиент не найден" };
     snapshot = {
       name: existing.name,
       regNumber: existing.regNumber,
@@ -80,7 +81,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     if (!snapshot.name || !snapshot.regNumber)
       return {
         ok: false,
-        error: "Kliendi nimi ja registrikood on kohustuslikud",
+        error: "Название клиента и регистрационный код обязательны",
       };
 
     if (payload.saveClient) {
@@ -157,6 +158,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     status,
     paidAt: status === "PAID" ? new Date() : null,
     currency: business.currency,
+    language: payload.language === "EN" ? "EN" : "ET",
     notes: payload.notes.trim() || null,
     subtotal,
     taxTotal,
@@ -168,7 +170,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
       const current = await prisma.invoice.findUnique({
         where: { id: payload.id },
       });
-      if (!current) return { ok: false, error: "Arvet ei leitud" };
+      if (!current) return { ok: false, error: "Счёт не найден" };
 
       // A draft moved into another month gets a fresh number for that month.
       let numbering = {};
@@ -220,7 +222,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     return { ok: true, id: invoice.id };
   } catch (err) {
     console.error("[saveInvoice]", err);
-    return { ok: false, error: "Salvestamine ebaõnnestus. Proovi uuesti." };
+    return { ok: false, error: "Не удалось сохранить. Попробуйте ещё раз." };
   }
 }
 
@@ -278,6 +280,7 @@ export async function duplicateInvoice(id: string) {
       dueDate,
       status: "DRAFT",
       currency: src.currency,
+      language: src.language,
       notes: src.notes,
       subtotal: src.subtotal,
       taxTotal: src.taxTotal,

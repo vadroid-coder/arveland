@@ -48,19 +48,19 @@ export default async function SetupPage({
           <Logo className="h-11 w-11" />
           <div className="text-center">
             <h1 className="text-xl font-semibold text-ink-900">
-              Esmane seadistus
+              Первичная настройка
             </h1>
-            <p className="text-sm text-ink-500">Loo administraatori konto</p>
+            <p className="text-sm text-ink-500">Создайте аккаунт администратора</p>
           </div>
         </div>
 
         <form action={createFirstAdmin} className="card space-y-4 p-6">
           <div>
-            <label className="label">Nimi</label>
+            <label className="label">Имя</label>
             <input name="name" className="field" placeholder="Administrator" />
           </div>
           <div>
-            <label className="label">E-post</label>
+            <label className="label">E-mail</label>
             <input
               name="email"
               type="email"
@@ -70,7 +70,7 @@ export default async function SetupPage({
             />
           </div>
           <div>
-            <label className="label">Parool (min 6 tähemärki)</label>
+            <label className="label">Пароль (минимум 6 символов)</label>
             <input
               name="password"
               type="password"
@@ -81,11 +81,11 @@ export default async function SetupPage({
           </div>
           {error ? (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-              Kontrolli andmeid ja proovi uuesti.
+              Проверьте данные и попробуйте ещё раз.
             </p>
           ) : null}
           <SubmitButton className="btn btn-primary w-full py-2.5">
-            Loo konto
+            Создать аккаунт
           </SubmitButton>
         </form>
       </div>

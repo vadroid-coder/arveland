@@ -1,5 +1,6 @@
 import { formatMoney, formatRate, taxBreakdown } from "@/lib/money";
 import { formatDate } from "@/lib/invoice";
+import { docStrings } from "@/lib/doc-language";
 
 type Business = {
   name: string;
@@ -21,6 +22,7 @@ type Invoice = {
   issueDate: Date;
   dueDate: Date;
   currency: string;
+  language: string;
   notes: string | null;
   subtotal: number;
   taxTotal: number;
@@ -48,8 +50,10 @@ export default function InvoiceDocument({
   business: Business;
   invoice: Invoice;
 }) {
+  const t = docStrings(invoice.language);
   const breakdown = taxBreakdown(invoice.items);
-  const money = (c: number) => formatMoney(c, invoice.currency);
+  const money = (c: number) => formatMoney(c, invoice.currency, t.locale);
+  const date = (d: Date) => formatDate(d, t.locale);
 
   return (
     <article className="doc mx-auto shadow-sm print:shadow-none">
@@ -66,8 +70,16 @@ export default function InvoiceDocument({
           ) : null}
           <p className="text-[13pt] leading-tight font-bold">{business.name}</p>
           <div className="mt-1 space-y-0.5 text-[9pt] text-[#4b5265]">
-            {business.regNumber && <p>Registrikood: {business.regNumber}</p>}
-            {business.vatNumber && <p>KMKR nr: {business.vatNumber}</p>}
+            {business.regNumber && (
+              <p>
+                {t.regNumber}: {business.regNumber}
+              </p>
+            )}
+            {business.vatNumber && (
+              <p>
+                {t.vatNumber}: {business.vatNumber}
+              </p>
+            )}
             {business.address && (
               <p className="whitespace-pre-line">{business.address}</p>
             )}
@@ -79,25 +91,25 @@ export default function InvoiceDocument({
 
         <div className="text-right">
           <p className="text-[20pt] leading-none font-bold tracking-tight">
-            ARVE
+            {t.title}
           </p>
           <p className="mt-1 text-[12pt] font-semibold">{invoice.number}</p>
           <table className="mt-4 ml-auto text-[9.5pt]">
             <tbody>
               <tr>
-                <td className="pr-3 text-right text-[#666e82]">Kuupäev</td>
+                <td className="pr-3 text-right text-[#666e82]">{t.issueDate}</td>
                 <td className="text-right font-medium">
-                  {formatDate(invoice.issueDate)}
+                  {date(invoice.issueDate)}
                 </td>
               </tr>
               <tr>
-                <td className="pr-3 text-right text-[#666e82]">Maksetähtaeg</td>
+                <td className="pr-3 text-right text-[#666e82]">{t.dueDate}</td>
                 <td className="text-right font-medium">
-                  {formatDate(invoice.dueDate)}
+                  {date(invoice.dueDate)}
                 </td>
               </tr>
               <tr>
-                <td className="pr-3 text-right text-[#666e82]">Tasuda</td>
+                <td className="pr-3 text-right text-[#666e82]">{t.amountDue}</td>
                 <td className="text-right font-bold">{money(invoice.total)}</td>
               </tr>
             </tbody>
@@ -108,12 +120,18 @@ export default function InvoiceDocument({
       {/* ---------- buyer ---------- */}
       <section className="mt-10 border-t border-[#dcdfe6] pt-4">
         <p className="text-[8pt] font-semibold tracking-[0.08em] text-[#8d94a5] uppercase">
-          Maksja
+          {t.payer}
         </p>
         <p className="mt-1 text-[11pt] font-semibold">{invoice.clientName}</p>
         <div className="mt-0.5 space-y-0.5 text-[9pt] text-[#4b5265]">
-          <p>Registrikood: {invoice.clientRegNumber}</p>
-          {invoice.clientVatNumber && <p>KMKR nr: {invoice.clientVatNumber}</p>}
+          <p>
+            {t.regNumber}: {invoice.clientRegNumber}
+          </p>
+          {invoice.clientVatNumber && (
+            <p>
+              {t.vatNumber}: {invoice.clientVatNumber}
+            </p>
+          )}
           {invoice.clientAddress && (
             <p className="whitespace-pre-line">{invoice.clientAddress}</p>
           )}
@@ -125,15 +143,21 @@ export default function InvoiceDocument({
       <table className="mt-8 w-full border-collapse text-[9.5pt]">
         <thead>
           <tr className="border-b-2 border-[#14171f] text-left text-[8pt] tracking-[0.06em] text-[#4b5265] uppercase">
-            <th className="py-1.5 pr-2 font-semibold">Kirjeldus</th>
-            <th className="w-16 px-2 py-1.5 text-right font-semibold">Kogus</th>
-            <th className="w-24 px-2 py-1.5 text-right font-semibold">Hind</th>
-            <th className="w-14 px-2 py-1.5 text-right font-semibold">KM %</th>
+            <th className="py-1.5 pr-2 font-semibold">{t.description}</th>
+            <th className="w-16 px-2 py-1.5 text-right font-semibold">
+              {t.quantity}
+            </th>
             <th className="w-24 px-2 py-1.5 text-right font-semibold">
-              Summa
+              {t.unitPrice}
+            </th>
+            <th className="w-14 px-2 py-1.5 text-right font-semibold">
+              {t.taxRate}
+            </th>
+            <th className="w-24 px-2 py-1.5 text-right font-semibold">
+              {t.lineNet}
             </th>
             <th className="w-28 py-1.5 pl-2 text-right font-semibold">
-              Kokku
+              {t.lineTotal}
             </th>
           </tr>
         </thead>
@@ -166,7 +190,7 @@ export default function InvoiceDocument({
         <table className="w-[75mm] text-[9.5pt]">
           <tbody>
             <tr>
-              <td className="py-1 text-[#4b5265]">Summa ilma käibemaksuta</td>
+              <td className="py-1 text-[#4b5265]">{t.subtotal}</td>
               <td className="py-1 text-right tabular-nums">
                 {money(invoice.subtotal)}
               </td>
@@ -174,13 +198,13 @@ export default function InvoiceDocument({
             {breakdown.map((b) => (
               <tr key={b.rate}>
                 <td className="py-1 text-[#4b5265]">
-                  Käibemaks {formatRate(b.rate)}
+                  {t.tax} {formatRate(b.rate)}
                 </td>
                 <td className="py-1 text-right tabular-nums">{money(b.tax)}</td>
               </tr>
             ))}
             <tr className="border-t-2 border-[#14171f]">
-              <td className="pt-2 text-[11pt] font-bold">Kokku tasuda</td>
+              <td className="pt-2 text-[11pt] font-bold">{t.total}</td>
               <td className="pt-2 text-right text-[11pt] font-bold tabular-nums">
                 {money(invoice.total)}
               </td>
@@ -192,15 +216,15 @@ export default function InvoiceDocument({
       {/* ---------- payment details ---------- */}
       <section className="mt-8 rounded-md border-2 border-[#14171f] px-5 py-4">
         <p className="text-[8pt] font-semibold tracking-[0.08em] text-[#4b5265] uppercase">
-          Makse rekvisiidid
+          {t.paymentDetails}
         </p>
         <div className="mt-2 grid grid-cols-2 gap-x-8 gap-y-1.5 text-[9.5pt]">
-          <Row label="Saaja" value={business.name} strong />
-          <Row label="Pank" value={business.bankName} />
-          <Row label="Arvelduskonto (IBAN)" value={business.bankAccount} strong />
-          <Row label="SWIFT / BIC" value={business.bankSwift} />
-          <Row label="Selgitus" value={invoice.number} strong />
-          <Row label="Summa" value={money(invoice.total)} strong />
+          <Row label={t.beneficiary} value={business.name} strong />
+          <Row label={t.bank} value={business.bankName} />
+          <Row label={t.account} value={business.bankAccount} strong />
+          <Row label={t.swift} value={business.bankSwift} />
+          <Row label={t.reference} value={invoice.number} strong />
+          <Row label={t.amount} value={money(invoice.total)} strong />
         </div>
       </section>
 
