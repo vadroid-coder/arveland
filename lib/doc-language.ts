@@ -41,6 +41,12 @@ type Strings = {
   swift: string;
   reference: string;
   amount: string;
+  emailSubject: (number: string, company: string) => string;
+  emailMonthSubject: (period: string, company: string) => string;
+  emailGreeting: string;
+  emailIntro: (company: string) => string;
+  emailMonthIntro: (company: string, count: number) => string;
+  emailRegards: string;
 };
 
 const ET: Strings = {
@@ -69,6 +75,13 @@ const ET: Strings = {
   swift: "SWIFT / BIC",
   reference: "Selgitus",
   amount: "Summa",
+  emailSubject: (number, company) => `Arve ${number} — ${company}`,
+  emailMonthSubject: (period, company) => `Arved ${period} — ${company}`,
+  emailGreeting: "Tere!",
+  emailIntro: (company) => `Manuses on arve ettevõttelt ${company}.`,
+  emailMonthIntro: (company, count) =>
+    `Manuses on ${count} arvet ettevõttelt ${company}.`,
+  emailRegards: "Parimate soovidega",
 };
 
 const EN: Strings = {
@@ -97,6 +110,13 @@ const EN: Strings = {
   swift: "SWIFT / BIC",
   reference: "Reference",
   amount: "Amount",
+  emailSubject: (number, company) => `Invoice ${number} from ${company}`,
+  emailMonthSubject: (period, company) => `Invoices ${period} from ${company}`,
+  emailGreeting: "Hello,",
+  emailIntro: (company) => `Please find attached your invoice from ${company}.`,
+  emailMonthIntro: (company, count) =>
+    `Please find attached ${count} invoices from ${company}.`,
+  emailRegards: "Kind regards",
 };
 
 export function docStrings(language: string | null | undefined): Strings {

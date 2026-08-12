@@ -76,3 +76,12 @@ export function effectiveStatus(invoice: {
     return "OVERDUE";
   return invoice.status === "SENT" ? "SENT" : "DRAFT";
 }
+
+/** Invoice numbers are filename-safe apart from a user-chosen prefix. */
+export function invoiceFileName(invoice: { number: string }) {
+  return `${invoice.number.replace(/[^\w.-]+/g, "_")}.pdf`;
+}
+
+export function zipFileName(prefix: string, year: number, month: number) {
+  return `${prefix}-${year}-${String(month).padStart(2, "0")}.zip`;
+}

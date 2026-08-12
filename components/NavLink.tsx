@@ -18,7 +18,7 @@ export default function NavLink({
   return (
     <Link
       href={href}
-      className={`relative -mb-px border-b-2 px-1 pb-2.5 text-sm font-medium transition ${
+      className={`relative -mb-px shrink-0 border-b-2 px-1 pb-2.5 text-sm font-medium whitespace-nowrap transition ${
         active
           ? "border-white text-white"
           : "border-transparent text-white/60 hover:text-white/90"

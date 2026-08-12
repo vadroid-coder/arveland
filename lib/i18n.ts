@@ -141,6 +141,14 @@ const RU = {
     errClient: "Клиент не найден",
     errClientRequired: "Название клиента и регистрационный код обязательны",
     errSave: "Не удалось сохранить. Попробуйте ещё раз.",
+    actions: "Действия",
+    downloadPdf: "Скачать PDF",
+    sendEmail: "Отправить на почту",
+    monthTitle: (period: string) => `Счета за ${period}`,
+    downloadZipAll: (n: number) => `Скачать всё одним ZIP (${n})`,
+    downloadEach: "Или по одному",
+    close: "Закрыть",
+    download: "Скачать",
   },
   client: {
     title: "Клиенты",
@@ -249,6 +257,19 @@ const RU = {
     errSelf: "Себя удалить нельзя.",
     confirmDelete: (email: string, n: number) =>
       `Удалить пользователя ${email}? Вместе с ним будут удалены его компании (${n}), клиенты и счета. Это необратимо.`,
+  },
+  mail: {
+    title: "Отправить на почту",
+    recipient: "E-mail получателя",
+    send: "Отправить",
+    sending: "Отправляю…",
+    attachment: (name: string) => `Вложение: ${name}`,
+    sentTo: (email: string) => `Отправлено на ${email}`,
+    errAuth: "Нужно войти заново",
+    errNotConfigured:
+      "Отправка почты не настроена — задайте RESEND_API_KEY и SENDER_EMAIL",
+    errRecipient: "Укажите корректный e-mail",
+    errNothing: "За этот месяц счетов нет",
   },
   settings: {
     title: "Профиль",
@@ -401,6 +422,14 @@ const ET: Dict = {
     errClient: "Klienti ei leitud",
     errClientRequired: "Kliendi nimi ja registrikood on kohustuslikud",
     errSave: "Salvestamine ebaõnnestus. Proovi uuesti.",
+    actions: "Tegevused",
+    downloadPdf: "Laadi alla PDF",
+    sendEmail: "Saada e-postiga",
+    monthTitle: (period: string) => `${period} arved`,
+    downloadZipAll: (n: number) => `Laadi kõik ühe ZIP-ina (${n})`,
+    downloadEach: "Või ükshaaval",
+    close: "Sulge",
+    download: "Laadi alla",
   },
   client: {
     title: "Kliendid",
@@ -506,6 +535,19 @@ const ET: Dict = {
     errSelf: "Iseennast ei saa kustutada.",
     confirmDelete: (email: string, n: number) =>
       `Kustutada kasutaja ${email}? Koos temaga kustuvad tema ettevõtted (${n}), kliendid ja arved. Seda ei saa tagasi võtta.`,
+  },
+  mail: {
+    title: "Saada e-postiga",
+    recipient: "Saaja e-post",
+    send: "Saada",
+    sending: "Saadan…",
+    attachment: (name: string) => `Manus: ${name}`,
+    sentTo: (email: string) => `Saadetud aadressile ${email}`,
+    errAuth: "Logi uuesti sisse",
+    errNotConfigured:
+      "E-posti saatmine pole seadistatud — määra RESEND_API_KEY ja SENDER_EMAIL",
+    errRecipient: "Sisesta korrektne e-post",
+    errNothing: "Selles kuus arveid pole",
   },
   settings: {
     title: "Profiil",
@@ -655,6 +697,14 @@ const EN: Dict = {
     errClient: "Client not found",
     errClientRequired: "Client name and registration number are required",
     errSave: "Could not save. Please try again.",
+    actions: "Actions",
+    downloadPdf: "Download PDF",
+    sendEmail: "Send by email",
+    monthTitle: (period: string) => `Invoices for ${period}`,
+    downloadZipAll: (n: number) => `Download all as one ZIP (${n})`,
+    downloadEach: "Or one by one",
+    close: "Close",
+    download: "Download",
   },
   client: {
     title: "Clients",
@@ -765,6 +815,19 @@ const EN: Dict = {
     errSelf: "You cannot delete yourself.",
     confirmDelete: (email: string, n: number) =>
       `Delete user ${email}? Their companies (${n}), clients and invoices go with them. This cannot be undone.`,
+  },
+  mail: {
+    title: "Send by email",
+    recipient: "Recipient email",
+    send: "Send",
+    sending: "Sending…",
+    attachment: (name: string) => `Attachment: ${name}`,
+    sentTo: (email: string) => `Sent to ${email}`,
+    errAuth: "Please sign in again",
+    errNotConfigured:
+      "Email sending is not configured — set RESEND_API_KEY and SENDER_EMAIL",
+    errRecipient: "Enter a valid email address",
+    errNothing: "No invoices in this month",
   },
   settings: {
     title: "Profile",

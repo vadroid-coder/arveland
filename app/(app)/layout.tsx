@@ -61,7 +61,7 @@ export default async function AppLayout({
             </form>
           </div>
 
-          <nav className="mx-auto flex max-w-7xl items-end gap-6 px-5">
+          <nav className="mx-auto flex max-w-7xl items-end gap-5 overflow-x-auto px-5 sm:gap-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <NavLink href="/" exact>
               {t.nav.invoices}
             </NavLink>

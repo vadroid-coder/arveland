@@ -4,7 +4,8 @@ import InvoiceDocument from "@/components/InvoiceDocument";
 import PrintButton from "@/components/PrintButton";
 import StatusBadge from "@/components/StatusBadge";
 import SubmitButton from "@/components/SubmitButton";
-import { effectiveStatus } from "@/lib/invoice";
+import { effectiveStatus, invoiceFileName } from "@/lib/invoice";
+import EmailButton from "@/components/EmailButton";
 import { getT } from "@/lib/ui-language";
 import { deleteInvoice, duplicateInvoice, setInvoiceStatus } from "../actions";
 
@@ -77,6 +78,14 @@ export default async function InvoicePage({
         <Link href={`/invoices/${invoice.id}/edit`} className="btn btn-ghost">
           {t.common.edit}
         </Link>
+        <a href={`/api/invoices/${invoice.id}/pdf`} className="btn btn-ghost">
+          {t.invoice.downloadPdf}
+        </a>
+        <EmailButton
+          target={{ kind: "invoice", id: invoice.id }}
+          defaultTo={invoice.clientEmail ?? ""}
+          attachmentName={invoiceFileName(invoice)}
+        />
         <PrintButton />
       </div>
 
