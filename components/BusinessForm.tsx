@@ -102,7 +102,7 @@ export default function BusinessForm({
         <h2 className="mb-4 text-sm font-semibold text-ink-700">
           {t.business.invoiceSection}
         </h2>
-        <div className="grid gap-4 sm:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Field label={`${t.business.prefix} *`}>
             <input
               name="invoicePrefix"

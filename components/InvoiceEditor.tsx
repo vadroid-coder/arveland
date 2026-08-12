@@ -320,46 +320,72 @@ export default function InvoiceEditor({
             return (
               <div
                 key={line.key}
-                className="grid items-start gap-2 rounded-lg border border-ink-100 p-2 lg:grid-cols-[1fr_5rem_8rem_7rem_6rem_8rem_2rem] lg:border-0 lg:p-0"
+                className="relative grid gap-2 rounded-lg border border-ink-100 p-3 lg:static lg:grid-cols-[1fr_5rem_8rem_7rem_6rem_8rem_2rem] lg:items-start lg:border-0 lg:p-0"
               >
-                <input
-                  className="field"
-                  placeholder={t.invoice.linePlaceholder}
-                  value={line.description}
-                  onChange={(e) =>
-                    patchLine(line.key, { description: e.target.value })
-                  }
-                />
-                <input
-                  className="field text-right tabular-nums"
-                  inputMode="decimal"
-                  value={line.quantity}
-                  onChange={(e) =>
-                    patchLine(line.key, { quantity: e.target.value })
-                  }
-                />
-                <input
-                  className="field text-right tabular-nums"
-                  inputMode="decimal"
-                  placeholder="0.00"
-                  value={line.amount}
-                  onChange={(e) =>
-                    patchLine(line.key, { amount: e.target.value })
-                  }
-                />
-                <ModeToggle
-                  value={line.amountMode}
-                  onChange={(m) => patchLine(line.key, { amountMode: m })}
-                />
-                <TaxRateSelect
-                  value={line.taxRate}
-                  rates={rates}
-                  onChange={(v) => patchLine(line.key, { taxRate: v })}
-                  onCreate={addRate}
-                />
-                <div className="flex h-9 items-center justify-end px-1 text-sm font-medium tabular-nums text-ink-800">
-                  {formatMoney(c.gross, business.currency)}
+                <div>
+                  <Cell label={t.invoice.colDescription} />
+                  <input
+                    className="field"
+                    placeholder={t.invoice.linePlaceholder}
+                    value={line.description}
+                    onChange={(e) =>
+                      patchLine(line.key, { description: e.target.value })
+                    }
+                  />
                 </div>
+
+                {/* on a phone these sit two-up; on desktop they rejoin the row */}
+                <div className="grid grid-cols-2 gap-2 lg:contents">
+                  <div>
+                    <Cell label={t.invoice.colQuantity} />
+                    <input
+                      className="field text-right tabular-nums"
+                      inputMode="decimal"
+                      value={line.quantity}
+                      onChange={(e) =>
+                        patchLine(line.key, { quantity: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Cell label={t.invoice.colAmount} />
+                    <input
+                      className="field text-right tabular-nums"
+                      inputMode="decimal"
+                      placeholder="0.00"
+                      value={line.amount}
+                      onChange={(e) =>
+                        patchLine(line.key, { amount: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <Cell label={t.invoice.colMode} />
+                    <ModeToggle
+                      value={line.amountMode}
+                      onChange={(m) => patchLine(line.key, { amountMode: m })}
+                    />
+                  </div>
+                  <div>
+                    <Cell label={t.invoice.colTax} />
+                    <TaxRateSelect
+                      value={line.taxRate}
+                      rates={rates}
+                      onChange={(v) => patchLine(line.key, { taxRate: v })}
+                      onCreate={addRate}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-ink-100 pt-2 lg:h-9 lg:justify-end lg:border-0 lg:px-1 lg:pt-0">
+                  <span className="text-xs text-ink-400 lg:hidden">
+                    {t.invoice.colTotal}
+                  </span>
+                  <span className="text-sm font-medium tabular-nums text-ink-800">
+                    {formatMoney(c.gross, business.currency)}
+                  </span>
+                </div>
+
                 <button
                   type="button"
                   onClick={() =>
@@ -369,7 +395,7 @@ export default function InvoiceEditor({
                         : ls.filter((l) => l.key !== line.key),
                     )
                   }
-                  className="grid h-9 w-8 place-items-center rounded-lg text-ink-400 transition hover:bg-red-50 hover:text-red-600"
+                  className="absolute top-2 right-2 grid h-8 w-8 place-items-center rounded-lg text-ink-400 transition hover:bg-red-50 hover:text-red-600 lg:static lg:h-9 lg:w-8"
                   title={t.invoice.deleteLine}
                 >
                   ×
@@ -465,6 +491,11 @@ export default function InvoiceEditor({
       </div>
     </div>
   );
+}
+
+/** Field label for the stacked mobile layout; the desktop row has a header. */
+function Cell({ label }: { label: string }) {
+  return <span className="label lg:hidden">{label}</span>;
 }
 
 function ModeToggle({

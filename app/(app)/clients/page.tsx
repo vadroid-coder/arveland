@@ -65,45 +65,83 @@ export default async function ClientsPage({
                 {t.client.empty}
               </p>
             ) : (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-ink-100 text-left text-xs tracking-wide text-ink-400 uppercase">
-                    <th className="px-4 py-2 font-medium">{t.client.colName}</th>
-                    <th className="px-4 py-2 font-medium">{t.client.colReg}</th>
-                    <th className="px-4 py-2 font-medium">{t.client.colVat}</th>
-                    <th className="px-4 py-2 text-right font-medium">{t.client.colInvoices}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {clients.map((c) => (
-                    <tr
-                      key={c.id}
-                      className="border-b border-ink-50 last:border-0 hover:bg-ink-50/60"
-                    >
-                      <td className="px-4 py-2.5">
-                        <Link
-                          href={`/clients/${c.id}`}
-                          className="font-medium text-brand-600 hover:underline"
-                        >
-                          {c.name}
-                        </Link>
-                        {c.email && (
-                          <span className="block text-xs text-ink-400">
-                            {c.email}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2.5 text-ink-600">{c.regNumber}</td>
-                      <td className="px-4 py-2.5 text-ink-600">
-                        {c.vatNumber ?? "—"}
-                      </td>
-                      <td className="px-4 py-2.5 text-right tabular-nums text-ink-600">
-                        {c._count.invoices}
-                      </td>
+              <>
+                {/* desktop */}
+                <table className="hidden w-full text-sm md:table">
+                  <thead>
+                    <tr className="border-b border-ink-100 text-left text-xs tracking-wide text-ink-400 uppercase">
+                      <th className="px-4 py-2 font-medium">{t.client.colName}</th>
+                      <th className="px-4 py-2 font-medium">{t.client.colReg}</th>
+                      <th className="px-4 py-2 font-medium">{t.client.colVat}</th>
+                      <th className="px-4 py-2 text-right font-medium">
+                        {t.client.colInvoices}
+                      </th>
                     </tr>
+                  </thead>
+                  <tbody>
+                    {clients.map((c) => (
+                      <tr
+                        key={c.id}
+                        className="border-b border-ink-50 last:border-0 hover:bg-ink-50/60"
+                      >
+                        <td className="px-4 py-2.5">
+                          <Link
+                            href={`/clients/${c.id}`}
+                            className="font-medium text-brand-600 hover:underline"
+                          >
+                            {c.name}
+                          </Link>
+                          {c.email && (
+                            <span className="block text-xs text-ink-400">
+                              {c.email}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-2.5 text-ink-600">{c.regNumber}</td>
+                        <td className="px-4 py-2.5 text-ink-600">
+                          {c.vatNumber ?? "—"}
+                        </td>
+                        <td className="px-4 py-2.5 text-right tabular-nums text-ink-600">
+                          {c._count.invoices}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* mobile */}
+                <ul className="divide-y divide-ink-100 md:hidden">
+                  {clients.map((c) => (
+                    <li key={c.id}>
+                      <Link
+                        href={`/clients/${c.id}`}
+                        className="flex items-start justify-between gap-3 p-4"
+                      >
+                        <span className="min-w-0">
+                          <span className="block truncate font-medium text-ink-900">
+                            {c.name}
+                          </span>
+                          <span className="block text-xs text-ink-500">
+                            {t.client.colReg} {c.regNumber}
+                            {c.vatNumber ? ` · ${t.client.colVat} ${c.vatNumber}` : ""}
+                          </span>
+                          {c.email && (
+                            <span className="block truncate text-xs text-ink-400">
+                              {c.email}
+                            </span>
+                          )}
+                        </span>
+                        <span className="shrink-0 text-right text-xs text-ink-500">
+                          {t.client.colInvoices}
+                          <span className="block text-base font-semibold tabular-nums text-ink-800">
+                            {c._count.invoices}
+                          </span>
+                        </span>
+                      </Link>
+                    </li>
                   ))}
-                </tbody>
-              </table>
+                </ul>
+              </>
             )}
           </div>
         </div>

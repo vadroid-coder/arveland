@@ -114,7 +114,7 @@ export default async function SettingsPage({
           {t.settings.passwordSection}
         </h2>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <label className="label">{t.settings.currentPassword}</label>
             <input
