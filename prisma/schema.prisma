@@ -1,0 +1,140 @@
+// ArveMaa — invoicing admin panel
+// Provider is rewritten by scripts/db-provider.mjs (sqlite locally, postgresql on Vercel).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         String   @default("USER") // ADMIN | USER
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Business {
+  id              String   @id @default(cuid())
+  name            String
+  regNumber       String?
+  vatNumber       String?
+  address         String?
+  email           String?
+  phone           String?
+  website         String?
+  logo            String? // data URL
+  invoicePrefix   String   @default("INV")
+  paymentTermDays Int      @default(7)
+  currency        String   @default("EUR")
+  bankName        String?
+  bankAccount     String?
+  bankSwift       String?
+  footerNote      String?
+  archived        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  clients  Client[]
+  taxRates TaxRate[]
+  invoices Invoice[]
+}
+
+model Client {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  name      String
+  regNumber String
+  vatNumber String?
+  address   String?
+  email     String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoices Invoice[]
+
+  @@unique([businessId, regNumber])
+  @@index([businessId, name])
+}
+
+model TaxRate {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  rate      Float // percent, e.g. 22
+  label     String?
+  createdAt DateTime @default(now())
+
+  @@unique([businessId, rate])
+}
+
+model Invoice {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // Frozen copy of client details at issue time
+  clientName      String
+  clientRegNumber String
+  clientVatNumber String?
+  clientAddress   String?
+  clientEmail     String?
+
+  number String
+  seq    Int
+  year   Int
+  month  Int
+
+  issueDate DateTime
+  dueDate   DateTime
+  status    String   @default("DRAFT") // DRAFT | SENT | PAID
+  paidAt    DateTime?
+
+  currency String @default("EUR")
+  notes    String?
+
+  subtotal Int @default(0) // net, in cents
+  taxTotal Int @default(0)
+  total    Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items InvoiceItem[]
+
+  @@unique([businessId, number])
+  @@index([businessId, year, month])
+}
+
+model InvoiceItem {
+  id        String  @id @default(cuid())
+  invoiceId String
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  description String
+  quantity    Float  @default(1)
+  amount      Int // entered amount per unit, in cents
+  amountMode  String @default("NET") // NET | INCL
+  taxRate     Float  @default(0)
+
+  net    Int @default(0)
+  tax    Int @default(0)
+  gross  Int @default(0)
+  sortNo Int @default(0)
+
+  @@index([invoiceId])
+}

@@ -1,26 +1,104 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink-50: #f6f7f9;
+  --color-ink-100: #eceef2;
+  --color-ink-200: #dcdfe6;
+  --color-ink-300: #c2c7d2;
+  --color-ink-400: #8d94a5;
+  --color-ink-500: #666e82;
+  --color-ink-600: #4b5265;
+  --color-ink-700: #383e4d;
+  --color-ink-800: #232833;
+  --color-ink-900: #14171f;
+
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #dbe6ff;
+  --color-brand-200: #bed2ff;
+  --color-brand-400: #6b8dff;
+  --color-brand-500: #3f66f5;
+  --color-brand-600: #2c4ddb;
+  --color-brand-700: #2440b3;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink-50);
+  color: var(--color-ink-800);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- form primitives ---------- */
+.field {
+  @apply block w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 shadow-xs outline-none transition;
+}
+.field:focus {
+  @apply border-brand-500 ring-2 ring-brand-500/20;
+}
+.field:disabled {
+  @apply bg-ink-100 text-ink-400;
+}
+.label {
+  @apply mb-1.5 block text-xs font-medium tracking-wide text-ink-500 uppercase;
+}
+.btn {
+  @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition select-none disabled:cursor-not-allowed disabled:opacity-50;
+}
+.btn-primary {
+  @apply bg-brand-600 text-white hover:bg-brand-700;
+}
+.btn-ghost {
+  @apply border border-ink-200 bg-white text-ink-700 hover:bg-ink-50;
+}
+.btn-danger {
+  @apply border border-red-200 bg-white text-red-600 hover:bg-red-50;
+}
+.card {
+  @apply rounded-xl border border-ink-200 bg-white shadow-xs;
+}
+.badge {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+}
+
+/* ---------- printable invoice ---------- */
+.doc {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 16mm 15mm;
+  background: #fff;
+  color: #14171f;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .doc {
+    width: auto;
+    min-height: auto;
+    box-shadow: none !important;
+    border: 0 !important;
+    margin: 0 !important;
+  }
 }

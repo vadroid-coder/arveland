@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ArveMaa
 
-## Getting Started
+Административная панель для выставления и хранения счетов.
+Next.js 16 (App Router) · Prisma · SQLite локально / PostgreSQL в проде · Tailwind v4.
 
-First, run the development server:
+## Что умеет
+
+- **Логин** по e-mail и паролю (JWT в httpOnly-cookie, пароли — bcrypt).
+- **Админка пользователей** (`/admin`, только для роли ADMIN): создание, смена роли, сброс пароля, деактивация.
+- **Мультибизнес**: сколько угодно компаний, переключатель в хедере. У каждой — свои клиенты, ставки налога, нумерация и реквизиты.
+- **Счета**: номер `PREFIX-YY-M-NR` (например `ARV-26-8-1`), нумерация отдельная по каждому месяцу и бизнесу.
+- Дата выставления по умолчанию — сегодня, срок оплаты — `+N` дней (настраивается на бизнесе), обе даты можно менять вручную.
+- **Клиенты**: выбор из выпадающего списка с поиском по названию или рег. номеру; если не найден — ввод вручную (обязательны только название и рег. номер) с опцией сохранить в справочник.
+- **Строки счёта**: описание, количество, сумма с переключателем `NET` / `INCL` (без налога / с налогом), ставка налога.
+- **Ставки налога** — комбобокс: выбор из сохранённых или ввод новой, тогда предлагается «Loo maksumäär X%» и она добавляется в список. Дубликаты невозможны (уникальный индекс `businessId + rate`).
+- Итоги: сумма без налога, разбивка налога по ставкам, итого к оплате.
+- **Документ счёта**: логотип в левом верхнем углу, реквизиты выставителя, отдельным выделенным блоком — платёжные реквизиты (получатель, банк, IBAN, SWIFT, назначение платежа). Печать / сохранение в PDF — кнопка «Prindi / PDF» (A4).
+- **Дашборд**: счета сгруппированы по месяцам с итогами, фильтры по году, статусу и поиску.
+
+## Локальный запуск
 
 ```bash
+npm install
+cp .env.example .env      # DATABASE_URL="file:./dev.db", AUTH_SECRET=...
+npm run db:push
+npm run seed              # админ из SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD
+npm run seed:demo         # опционально: демо-компания, клиенты и счета
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открыть http://localhost:3000. Если пользователей нет вообще — приложение само откроет `/setup` для создания первого администратора.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Полезное:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run db:studio   # Prisma Studio
+npm run db:reset    # снести базу и пересоздать с чистым админом
+```
 
-## Learn More
+## Деплой на Vercel (бесплатный тариф)
 
-To learn more about Next.js, take a look at the following resources:
+1. Завести бесплатную PostgreSQL-базу — Neon (neon.tech) или Vercel Postgres в разделе Storage.
+2. Импортировать репозиторий в Vercel.
+3. Задать переменные окружения проекта:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   | Переменная          | Значение                                                |
+   | ------------------- | ------------------------------------------------------- |
+   | `DATABASE_PROVIDER` | `postgresql`                                            |
+   | `DATABASE_URL`      | строка подключения (pooled, `?sslmode=require`)          |
+   | `AUTH_SECRET`       | `openssl rand -base64 32`                               |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Deploy. Скрипт сборки сам переключает провайдера Prisma и делает `prisma db push` — миграции не нужны.
+5. Открыть домен, `/setup` предложит создать первого администратора.
 
-## Deploy on Vercel
+Схема Prisma одна на оба окружения: `scripts/db-provider.mjs` подставляет провайдер из `DATABASE_PROVIDER` (по умолчанию `sqlite`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Структура
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+app/(app)/          защищённая часть: дашборд, счета, клиенты, компании, админка
+app/login, /setup   вход и первичная настройка
+components/         InvoiceEditor, InvoiceDocument, ClientPicker, TaxRateSelect, ...
+lib/                prisma, auth/session, money (расчёты в центах), invoice (нумерация, даты)
+prisma/schema.prisma
+scripts/            db-provider, seed, demo
+proxy.ts            защита маршрутов (бывший middleware)
+```
+
+Все денежные суммы хранятся целыми числами в центах; итоги пересчитываются на сервере при каждом сохранении, данные с клиента не принимаются на веру.
