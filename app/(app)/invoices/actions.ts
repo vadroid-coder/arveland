@@ -30,6 +30,8 @@ export type InvoicePayload = {
   saveClient: boolean;
   issueDate: string;
   dueDate: string;
+  /** Empty means "keep generating it"; a value is an explicit override. */
+  number: string;
   status: string;
   language: string;
   notes: string;
@@ -147,6 +149,7 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
   const status = ["DRAFT", "SENT", "PAID"].includes(payload.status)
     ? payload.status
     : "DRAFT";
+  const customNumber = payload.number.trim();
 
   const base = {
     clientId,
@@ -174,9 +177,12 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
       });
       if (!current) return { ok: false, error: t.invoice.errInvoice };
 
-      // A draft moved into another month gets a fresh number for that month.
+      // An edited number wins; otherwise a draft moved into another month gets
+      // a fresh number for that month.
       let numbering = {};
-      if (
+      if (customNumber && customNumber !== current.number) {
+        numbering = { number: customNumber };
+      } else if (
         current.status === "DRAFT" &&
         (current.year !== year || current.month !== month)
       ) {
@@ -215,7 +221,9 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
         year,
         month,
         seq,
-        number: buildInvoiceNumber(business.invoicePrefix, year, month, seq),
+        number:
+          customNumber ||
+          buildInvoiceNumber(business.invoicePrefix, year, month, seq),
         items: { create: lines },
       },
     });
@@ -223,6 +231,9 @@ export async function saveInvoice(payload: InvoicePayload): Promise<SaveResult> 
     revalidatePath("/");
     return { ok: true, id: invoice.id };
   } catch (err) {
+    // The (businessId, number) unique index is what catches a clashing manual number.
+    if ((err as { code?: string })?.code === "P2002")
+      return { ok: false, error: t.invoice.errNumberTaken };
     console.error("[saveInvoice]", err);
     return { ok: false, error: t.invoice.errSave };
   }

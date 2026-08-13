@@ -121,6 +121,13 @@ export default function InvoiceEditor({
   const [dueDate, setDueDate] = useState(invoice?.dueDate ?? defaultDueDate);
   const [dueTouched, setDueTouched] = useState(Boolean(invoice));
   const [status, setStatus] = useState(invoice?.status ?? "DRAFT");
+
+  // The field shows the generated number, but stays editable. Only a number the
+  // user actually touched is sent — otherwise the server regenerates it, which
+  // matters when the issue date moves the invoice into another month.
+  const autoNumber = invoice?.number ?? numberPreview;
+  const [number, setNumber] = useState(autoNumber);
+  const [numberTouched, setNumberTouched] = useState(false);
   const [language, setLanguage] = useState(
     invoice?.language ?? business.defaultLanguage ?? "ET",
   );
@@ -184,6 +191,7 @@ export default function InvoiceEditor({
       saveClient,
       issueDate,
       dueDate,
+      number: numberTouched ? number.trim() : "",
       status,
       language,
       notes,
@@ -235,14 +243,26 @@ export default function InvoiceEditor({
           <div>
             <label className="label">{t.invoice.number}</label>
             <input
-              className="field bg-ink-50 font-medium"
-              value={invoice?.number ?? numberPreview}
-              readOnly
+              className="field font-medium"
+              value={number}
+              onChange={(e) => {
+                setNumberTouched(true);
+                setNumber(e.target.value);
+              }}
             />
-            {!invoice && (
-              <p className="mt-1 text-xs text-ink-400">
-                {t.invoice.numberAssigned}
-              </p>
+            {numberTouched && number.trim() !== autoNumber ? (
+              <button
+                type="button"
+                className="mt-1 text-xs text-brand-600 hover:underline"
+                onClick={() => {
+                  setNumber(autoNumber);
+                  setNumberTouched(false);
+                }}
+              >
+                {t.invoice.numberReset}
+              </button>
+            ) : (
+              <p className="mt-1 text-xs text-ink-400">{t.invoice.numberAuto}</p>
             )}
           </div>
           <div>
