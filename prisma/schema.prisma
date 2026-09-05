@@ -47,6 +47,7 @@ model Business {
   bankName        String?
   bankAccount     String?
   bankSwift       String?
+  paypalEmail     String? // second way to pay, printed under the bank details
   footerNote      String?
   archived        Boolean  @default(false)
   createdAt       DateTime @default(now())

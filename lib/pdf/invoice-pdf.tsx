@@ -132,6 +132,7 @@ export type PdfBusiness = {
   bankName: string | null;
   bankAccount: string | null;
   bankSwift: string | null;
+  paypalEmail: string | null;
   footerNote: string | null;
 };
 
@@ -280,6 +281,7 @@ export function InvoicePdf({
             <PayCell label={t.bank} value={business.bankName} />
             <PayCell label={t.account} value={business.bankAccount} strong />
             <PayCell label={t.swift} value={business.bankSwift} />
+            <PayCell label={t.paypal} value={business.paypalEmail} strong />
             <PayCell label={t.reference} value={invoice.number} strong />
             <PayCell label={t.amount} value={money(invoice.total)} strong />
           </View>

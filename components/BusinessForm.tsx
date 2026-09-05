@@ -22,6 +22,7 @@ type BusinessLike = {
   bankName?: string | null;
   bankAccount?: string | null;
   bankSwift?: string | null;
+  paypalEmail?: string | null;
   footerNote?: string | null;
 };
 
@@ -184,6 +185,15 @@ export default function BusinessForm({
               className="field"
               defaultValue={b.bankSwift ?? ""}
             />
+          </Field>
+          <Field label={t.business.paypal} className="sm:col-span-3">
+            <input
+              name="paypalEmail"
+              className="field"
+              defaultValue={b.paypalEmail ?? ""}
+              placeholder="wallet@example.com"
+            />
+            <p className="mt-1 text-xs text-ink-400">{t.business.paypalHint}</p>
           </Field>
           <Field label={t.business.footerNote} className="sm:col-span-3">
             <textarea

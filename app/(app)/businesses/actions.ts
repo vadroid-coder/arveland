@@ -31,6 +31,7 @@ function readBusiness(fd: FormData) {
     bankName: str(fd, "bankName"),
     bankAccount: str(fd, "bankAccount"),
     bankSwift: str(fd, "bankSwift"),
+    paypalEmail: str(fd, "paypalEmail"),
     footerNote: str(fd, "footerNote"),
   };
 }

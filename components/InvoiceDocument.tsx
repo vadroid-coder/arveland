@@ -14,6 +14,7 @@ type Business = {
   bankName: string | null;
   bankAccount: string | null;
   bankSwift: string | null;
+  paypalEmail: string | null;
   footerNote: string | null;
 };
 
@@ -223,6 +224,7 @@ export default function InvoiceDocument({
           <Row label={t.bank} value={business.bankName} />
           <Row label={t.account} value={business.bankAccount} strong />
           <Row label={t.swift} value={business.bankSwift} />
+          <Row label={t.paypal} value={business.paypalEmail} strong />
           <Row label={t.reference} value={invoice.number} strong />
           <Row label={t.amount} value={money(invoice.total)} strong />
         </div>

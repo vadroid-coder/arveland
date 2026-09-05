@@ -39,6 +39,7 @@ type Strings = {
   bank: string;
   account: string;
   swift: string;
+  paypal: string;
   reference: string;
   amount: string;
   emailSubject: (number: string, company: string) => string;
@@ -73,6 +74,7 @@ const ET: Strings = {
   bank: "Pank",
   account: "Arvelduskonto (IBAN)",
   swift: "SWIFT / BIC",
+  paypal: "PayPal",
   reference: "Selgitus",
   amount: "Summa",
   emailSubject: (number, company) => `Arve ${number} — ${company}`,
@@ -108,6 +110,7 @@ const EN: Strings = {
   bank: "Bank",
   account: "Account (IBAN)",
   swift: "SWIFT / BIC",
+  paypal: "PayPal",
   reference: "Reference",
   amount: "Amount",
   emailSubject: (number, company) => `Invoice ${number} from ${company}`,
